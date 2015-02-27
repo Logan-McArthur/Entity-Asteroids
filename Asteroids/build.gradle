@@ -31,3 +31,13 @@ natives {
         'jinput-platform-2.0.5-natives-osx.jar' ]
 	platforms = 'windows'
 }
+
+test {
+    systemProperties 'java.library.path': 'build\\natives\\windows'
+}
+
+task setup << {
+	clean
+	build
+	unpackNatives
+}
