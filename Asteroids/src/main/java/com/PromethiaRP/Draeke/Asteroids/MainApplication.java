@@ -27,7 +27,7 @@ public class MainApplication extends StateBasedGame {
 			int screenWidth = 800;
 
 			AppGameContainer app = new AppGameContainer(new MainApplication("Asteroids", screenWidth, screenHeight));
-			app.setResizable(false);
+			//app.setResizable(false);
 			app.setTargetFrameRate(60);
 			app.setDisplayMode(screenWidth, screenHeight, false);
 			app.setShowFPS(false);

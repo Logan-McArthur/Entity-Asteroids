@@ -29,8 +29,8 @@ public class TitleScreen extends BasicGameState{
 		asteroidSpawnCooldown.start(MainApplication.rand.nextInt(300) + 1);
 		inputManager = new InputManager(container);
 		inputManager.createMouseControl(Input.MOUSE_LEFT_BUTTON, "LeftMouse");
-		startButtonImage = new Image("C:\\Users\\Logan McArthur\\Pictures\\StartButton.png");
-		quitButtonImage =new Image("C:\\Users\\Logan McArthur\\Pictures\\QuitButton.png");
+//		startButtonImage = new Image("C:\\Users\\Logan McArthur\\Pictures\\StartButton.png");
+//		quitButtonImage =new Image("C:\\Users\\Logan McArthur\\Pictures\\QuitButton.png");
 	}
 
 	@Override
@@ -39,8 +39,8 @@ public class TitleScreen extends BasicGameState{
 		grafix.setColor(Color.white);
 		grafix.setLineWidth(2);
 		
-		grafix.drawImage(startButtonImage, 175, 300);
-		grafix.drawImage(quitButtonImage, 425, 300);
+//		grafix.drawImage(startButtonImage, 175, 300);
+//		grafix.drawImage(quitButtonImage, 425, 300);
 		
 		for (int i = 0; i < asteroids.size(); i++) {
 			if (asteroids.get(i).alive){
