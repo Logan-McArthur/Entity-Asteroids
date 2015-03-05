@@ -11,7 +11,7 @@ public class Body extends Component{
 		
 	}
 
-
+	
 	protected Polygon structure;
 	protected float centerOffsetX = 0.0f;
 	protected float centerOffsetY = 0.0f;
@@ -20,8 +20,9 @@ public class Body extends Component{
 	protected float scaleY = 1.0f;
 
 	// Mostly Consistent
-	public float mass;
-
+	protected float invMass;
+	protected float moment;
+	
 	protected float centerX = 0.0f;
 	protected float centerY = 0.0f;
 
@@ -32,7 +33,19 @@ public class Body extends Component{
 
 	protected float rotation = 0.0f;
 
+	protected float forceX = 0.0f;
+	protected float forceY = 0.0f;
 
+	protected float torque = 0.0f;
+	
+	public void setMass(float mass) {
+		if (mass <= 0) {
+			invMass = 0;
+		} else {
+			invMass = 1.0f / mass;
+		}
+	}
+	
 	public void setStructure(float[] points, float centerOffsetX, float centerOffsetY, int front) {
 		structure = new Polygon(points);
 		this.centerOffsetX = centerOffsetX;
@@ -65,13 +78,16 @@ public class Body extends Component{
 	
 	public void update(int delta) {
 
-
-		if (Math.abs(velocityX + accelerationX * delta) < maxSpeed) {
+		float accelerationX = invMass * forceX;
+		float accelerationY = invMass * forceY;
+		float accelerationR = moment * torque;
+		
+		//if (Math.abs(velocityX + accelerationX * delta) < maxSpeed) {
 			velocityX += accelerationX * delta;
-		}
-		if (Math.abs(velocityY + accelerationY * delta) < maxSpeed) {
+		//}
+		//if (Math.abs(velocityY + accelerationY * delta) < maxSpeed) {
 			velocityY += accelerationY * delta;
-		}
+		//}
 //		rotation += velocityR * delta * turnSpeedModifier;
 //		centerX += velocityX * delta * speedModifier;
 //		centerY += velocityY * delta * speedModifier;

@@ -16,7 +16,10 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 public class GameplayScreen extends BasicGameState{
 
 	private final int MAX_NUMBER_BULLETS = 30;
-
+	private final int MAX_NUMBER_ENTITIES = 100;
+	private static Entity[] entities;
+	private static Component[] components;
+	
 	private static Bullet[] bulletPool;
 	private static int nextBulletIndex = 0;
 
@@ -63,6 +66,8 @@ public class GameplayScreen extends BasicGameState{
 		inputManager.createKeyControl(Input.KEY_SPACE, "Shoot");
 		bulletPool = new Bullet[MAX_NUMBER_BULLETS];
 		initializeBullets();
+		entities = new Entity[MAX_NUMBER_ENTITIES];
+		
 		initializeAsteroids();
 	}
 
