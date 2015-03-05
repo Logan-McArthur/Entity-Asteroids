@@ -2,7 +2,8 @@ package com.PromethiaRP.Draeke.Asteroids;
 
 public class Player extends Entity{
 
-	private int hitPoints = 5;
+//	private int hitPoints = 5;
+//	
 	
 	private boolean firingWeapon = false;
 	
@@ -12,12 +13,17 @@ public class Player extends Entity{
 	
 	private Weapon currentWeapon = Weapon.SINGLE;
 	
-	public Player(float x, float y) {
-		super(x,y);
-		setStructure(new float[]{0.0f, 0.0f, 30.0f, 10.0f, 0.0f, 20.0f}, 15, 10, 1);
-		alive = true;
-		maxSpeed = .8f;
+	public Player(int ID, Body bod, Health health) {
+		super(ID);
 		
+		this.body = bod;
+		this.hitPoints = health;
+		// Won't work right now
+//		
+//		body.setStructure(new float[]{0.0f, 0.0f, 30.0f, 10.0f, 0.0f, 20.0f}, 15, 10, 1);
+//		alive = true;
+//		maxSpeed = .8f;
+//		
 		weaponCooler = new Cooldown();
 		animation = new BlinkAnimation();
 	}
@@ -27,10 +33,18 @@ public class Player extends Entity{
 	}
 	
 	private void fireWeapon() {
-		float[] coords = getTransform().getPoint(1);
+		float[] coords = body.getTransform().getPoint(1);
 		Bullet[] allocated = GameplayScreen.allocateBullets(currentWeapon.NUMBER_SHOTS);
 		for (int i = 0; i < allocated.length; i++) {
-			allocated[i].recycle(coords[0], coords[1], velocityX, velocityY, rotation+currentWeapon.SHOT_ANGLES[i], currentWeapon.BULLET_LIFE);
+			Body allocBod = allocated[i].body;
+			
+			allocBod.centerX = coords[0];
+			allocBod.centerY = coords[1];
+			allocBod.velocityX = body.velocityX;
+			allocBod.velocityY = body.velocityY;
+			allocBod.rotation = body.rotation + currentWeapon.SHOT_ANGLES[i];
+			allocated[i].start(currentWeapon.BULLET_LIFE);
+//			allocated[i].recycle(coords[0], coords[1], body.velocityX, body.velocityY, body.rotation+currentWeapon.SHOT_ANGLES[i], currentWeapon.BULLET_LIFE);
 		}
 		
 		weaponCooler.start(currentWeapon.COOLDOWN);
@@ -47,17 +61,13 @@ public class Player extends Entity{
 			}
 		}
 		
-		accelerate();
-		move(delta);
+		// Have the components update separately from the entities?
+//		accelerate();
+//		move(delta);
 	}
 	
 	private void damage() {
-		hitPoints--;
-		if (hitPoints == 0) {
-			alive = false;
-		} else {
-			animation.start();
-		}
+		hitPoints.hurt(1);
 	}
 	
 	@Override
@@ -73,4 +83,6 @@ public class Player extends Entity{
 	public boolean isVisible() {
 		return animation.isVisible();
 	}
+
+	
 }
