@@ -13,6 +13,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
+import com.PromethiaRP.Draeke.Asteroids.Component.Component;
+
 public class GameplayScreen extends BasicGameState{
 
 	private final int MAX_NUMBER_BULLETS = 30;
@@ -78,20 +80,16 @@ public class GameplayScreen extends BasicGameState{
 		boolean asteroidsAlive = false;
 		
 		{	// Player update block
-
-			if (inputManager.isControlPressed("Forward") && inputManager.isControlPressed("Backward")) {
-				play.setAccelerating(0);
-			} else if (inputManager.isControlPressed("Forward")) {
-				play.setAccelerating(1);
-			} else if (inputManager.isControlPressed("Backward")) {
-				play.setAccelerating(-1);
-			} else {
-				play.setAccelerating(0);
+			float thrustForce = 1.0f;
+			if (inputManager.isControlPressed("Forward")) {
+				play.body.applyForce(thrustForce * (float)Math.cos(play.body.rotation), thrustForce * (float)Math.sin(play.body.rotation));
+			}
+			if (inputManager.isControlPressed("Backward")) {
+				play.body.applyForce(-1 *thrustForce * (float)Math.cos(play.body.rotation), -1*thrustForce * (float)Math.sin(play.body.rotation));
 			}
 			
-			if (inputManager.isControlPressed("TurnLeft") && inputManager.isControlPressed("TurnRight")) {
-				play.setRotating(0);
-			} else if (inputManager.isControlPressed("TurnLeft")) {
+			
+			if (inputManager.isControlPressed("TurnLeft")) {
 				play.setRotating(-1);
 			} else if (inputManager.isControlPressed("TurnRight")) {
 				play.setRotating(1);
@@ -104,84 +102,86 @@ public class GameplayScreen extends BasicGameState{
 			} else {
 				play.setShooting(false);
 			}
-
-
-			if (play.centerX > container.getWidth()) {
-				play.centerX = 0;
-			}
-			if (play.centerX < 0) {
-				play.centerX = container.getWidth();
-			}
-			if (play.centerY > container.getHeight()) {
-				play.centerY = 0;
-			}
-			if (play.centerY < 0) {
-				play.centerY = container.getHeight();
-			}
-			play.update(delta);
+	
 		}
 
-		{	// Bullet update block
-			for (int i = 0; i < bulletPool.length; i++) {
-				if(bulletPool[i].alive){ 
-					bulletPool[i].update(delta);
-					if (bulletPool[i].centerX < 0) {
-						bulletPool[i].centerX = container.getWidth();
-					}
-					if (bulletPool[i].centerX > container.getWidth()) {
-						bulletPool[i].centerX = 0;
-					}
-					if (bulletPool[i].centerY < 0) {
-						bulletPool[i].centerY = container.getHeight();
-					}
-					if (bulletPool[i].centerY > container.getHeight()) {
-						bulletPool[i].centerY = 0;
-					}
-				}
+		for (Entity ent : entities) {
+			if (ent.body.centerX > container.getWidth()) {
+				ent.body.centerX = 0;
 			}
-		}
-
-		{	// Asteroid update block
-			for (int j = 0; j < asteroidPool.size(); j++) {
-				Asteroid aster = asteroidPool.get(j);
-				if (aster.alive) {
-					asteroidsAlive = true;
-				} else {
-					continue;
-				}
-				if (aster.doesCollide(play)) {
-					aster.collide(play);
-					play.collide(aster);
-				}
-				for (int i = 0; i < bulletPool.length; i++) {
-					if (bulletPool[i].alive) {
-						if (aster.doesCollide(bulletPool[i])) {
-							aster.collide(bulletPool[i]);
-							bulletPool[i].collide(aster);
-						}
-						
-					}
-				}
-				
-				aster.update(delta);
-				
-				if (aster.centerX < 0){
-					aster.centerX = container.getWidth();
-				}
-				if (aster.centerX > container.getWidth()) {
-					aster.centerX = 0;
-				}
-				if (aster.centerY > container.getHeight()) {
-					aster.centerY = 0;
-				}
-				if (aster.centerY < 0) {
-					aster.centerY = container.getHeight();
-				}
+			if (ent.body.centerX < 0) {
+				ent.body.centerX = container.getWidth();
 			}
+			if (ent.body.centerY > container.getHeight()) {
+				ent.body.centerY = 0;
+			}
+			if (ent.body.centerY < 0) {
+				ent.body.centerY = container.getHeight();
+			}
+			ent.update(delta);
 		}
 		
+//		{	// Bullet update block
+//			for (int i = 0; i < bulletPool.length; i++) {
+//				if(bulletPool[i].alive){ 
+//					bulletPool[i].update(delta);
+//					if (bulletPool[i].centerX < 0) {
+//						bulletPool[i].centerX = container.getWidth();
+//					}
+//					if (bulletPool[i].centerX > container.getWidth()) {
+//						bulletPool[i].centerX = 0;
+//					}
+//					if (bulletPool[i].centerY < 0) {
+//						bulletPool[i].centerY = container.getHeight();
+//					}
+//					if (bulletPool[i].centerY > container.getHeight()) {
+//						bulletPool[i].centerY = 0;
+//					}
+//				}
+//			}
+//		}
+
+//		{	// Asteroid update block
+//			for (int j = 0; j < asteroidPool.size(); j++) {
+//				Asteroid aster = asteroidPool.get(j);
+//				if (aster.alive) {
+//					asteroidsAlive = true;
+//				} else {
+//					continue;
+//				}
+//				if (aster.doesCollide(play)) {
+//					aster.collide(play);
+//					play.collide(aster);
+//				}
+//				for (int i = 0; i < bulletPool.length; i++) {
+//					if (bulletPool[i].alive) {
+//						if (aster.doesCollide(bulletPool[i])) {
+//							aster.collide(bulletPool[i]);
+//							bulletPool[i].collide(aster);
+//						}
+//						
+//					}
+//				}
+//				
+//				aster.update(delta);
+//				
+//				if (aster.centerX < 0){
+//					aster.centerX = container.getWidth();
+//				}
+//				if (aster.centerX > container.getWidth()) {
+//					aster.centerX = 0;
+//				}
+//				if (aster.centerY > container.getHeight()) {
+//					aster.centerY = 0;
+//				}
+//				if (aster.centerY < 0) {
+//					aster.centerY = container.getHeight();
+//				}
+//			}
+//		}
+		
 		{	// Game status update block
-			if (! play.alive) {
+			if (! play.isAlive()) {
 				game.enterState(MainApplication.GAMEOVER_SCREEN, new FadeOutTransition(), new FadeInTransition());
 			}
 			if (! asteroidsAlive) {
@@ -199,6 +199,10 @@ public class GameplayScreen extends BasicGameState{
 		}
 	}
 
+	private Bullet constructBullet(float xPos, float yPos) {
+		Bullet blt = 
+	}
+	
 	public static Bullet[] allocateBullets(int number) {
 		int collected = 0;
 		Bullet[] bullets = new Bullet[number];
@@ -238,7 +242,7 @@ public class GameplayScreen extends BasicGameState{
 			if (i == asteroidPool.size()) {
 				asteroidPool.add(new Asteroid(AsteroidSize.LARGE, 0.0f, 0.0f));
 			}
-			if (asteroidPool.get(i).alive){
+			if (asteroidPool.get(i).isAlive()){
 				continue;
 			}else {
 				asteroids[collected] = asteroidPool.get(i);

@@ -1,10 +1,10 @@
-package com.PromethiaRP.Draeke.Asteroids;
+package com.PromethiaRP.Draeke.Asteroids.Component;
+
 
 public class Health extends Component{
 
 	private int lifePoints;
-	public Health(int ID, int life) {
-		super(ID);
+	public Health(int life) {
 		lifePoints = life;
 	}
 	@Override

@@ -43,11 +43,11 @@ public class TitleScreen extends BasicGameState{
 //		grafix.drawImage(quitButtonImage, 425, 300);
 		
 		for (int i = 0; i < asteroids.size(); i++) {
-			if (asteroids.get(i).alive){
+			if (asteroids.get(i).isAlive()){
 				grafix.setColor(Color.black);
-				grafix.fill(asteroids.get(i).getTransform());
+				grafix.fill(asteroids.get(i).body.getTransform());
 				grafix.setColor(Color.white);
-				grafix.draw(asteroids.get(i).getTransform());
+				grafix.draw(asteroids.get(i).body.getTransform());
 			}
 		}
 		

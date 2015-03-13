@@ -1,9 +1,12 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
+import com.PromethiaRP.Draeke.Asteroids.Component.Body;
+import com.PromethiaRP.Draeke.Asteroids.Component.Health;
+
 public abstract class Entity {
 
-	protected int entityID;
-	
+//	protected int entityID;
+//	
 	protected float speedModifier = .2f;
 	protected float turnSpeedModifier = .0025f;
 	protected float accelModifier = .001f;
@@ -19,10 +22,13 @@ public abstract class Entity {
 	protected Health hitPoints;// = new Health();
 	
 	
-	public Entity(int ID) {
-		entityID = ID;
-	}
+//	public Entity(int ID) {
+//		entityID = ID;
+//	}
 	
+	public Entity() {
+		
+	}
 	
 	/**
 	 * Sets the base rotation speed

@@ -1,5 +1,8 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
+import com.PromethiaRP.Draeke.Asteroids.Component.Body;
+import com.PromethiaRP.Draeke.Asteroids.Component.Health;
+
 public class Player extends Entity{
 
 //	private int hitPoints = 5;
@@ -13,20 +16,29 @@ public class Player extends Entity{
 	
 	private Weapon currentWeapon = Weapon.SINGLE;
 	
-	public Player(int ID, Body bod, Health health) {
-		super(ID);
-		
+	public Player(Body bod, Health health) {
+
 		this.body = bod;
 		this.hitPoints = health;
-		// Won't work right now
-//		
-//		body.setStructure(new float[]{0.0f, 0.0f, 30.0f, 10.0f, 0.0f, 20.0f}, 15, 10, 1);
-//		alive = true;
-//		maxSpeed = .8f;
-//		
+		
 		weaponCooler = new Cooldown();
 		animation = new BlinkAnimation();
 	}
+	
+//	public Player(int ID, Body bod, Health health) {
+//		super(ID);
+//		
+//		this.body = bod;
+//		this.hitPoints = health;
+//		// Won't work right now
+////		
+////		body.setStructure(new float[]{0.0f, 0.0f, 30.0f, 10.0f, 0.0f, 20.0f}, 15, 10, 1);
+////		alive = true;
+////		maxSpeed = .8f;
+////		
+//		weaponCooler = new Cooldown();
+//		animation = new BlinkAnimation();
+//	}
 	
 	public void setShooting(boolean shooting) {
 		firingWeapon = shooting;

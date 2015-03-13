@@ -1,4 +1,4 @@
-package com.PromethiaRP.Draeke.Asteroids;
+package com.PromethiaRP.Draeke.Asteroids.Component;
 
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Shape;
@@ -6,10 +6,10 @@ import org.newdawn.slick.geom.Transform;
 
 public class Body extends Component{
 
-	public Body(int ID) {
-		super(ID);
-		
-	}
+//	public Body() {
+//		
+//		
+//	}
 
 	
 	protected Polygon structure;
@@ -21,7 +21,7 @@ public class Body extends Component{
 
 	// Mostly Consistent
 	protected float invMass;
-	protected float moment;
+	protected float invMoment;
 	
 	protected float centerX = 0.0f;
 	protected float centerY = 0.0f;
@@ -75,12 +75,16 @@ public class Body extends Component{
 		return centerY + centerOffsetY;
 	}
 	
+	public void applyForce(float forceX, float forceY) {
+		this.forceX += forceX;
+		this.forceY += forceY;
+	}
 	
 	public void update(int delta) {
 
 		float accelerationX = invMass * forceX;
 		float accelerationY = invMass * forceY;
-		float accelerationR = moment * torque;
+		float accelerationR = invMoment * torque;
 		
 		//if (Math.abs(velocityX + accelerationX * delta) < maxSpeed) {
 			velocityX += accelerationX * delta;
@@ -88,9 +92,10 @@ public class Body extends Component{
 		//if (Math.abs(velocityY + accelerationY * delta) < maxSpeed) {
 			velocityY += accelerationY * delta;
 		//}
-//		rotation += velocityR * delta * turnSpeedModifier;
-//		centerX += velocityX * delta * speedModifier;
-//		centerY += velocityY * delta * speedModifier;
+			velocityR += accelerationR * delta;
+		rotation += velocityR * delta;
+		centerX += velocityX * delta;
+		centerY += velocityY * delta;
 
 	}
 }

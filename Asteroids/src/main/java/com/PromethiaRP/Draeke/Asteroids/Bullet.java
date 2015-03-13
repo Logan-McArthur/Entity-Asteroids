@@ -1,13 +1,15 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
+import com.PromethiaRP.Draeke.Asteroids.Component.Body;
+
 public class Bullet extends Entity{
 
 	private Cooldown lifetime;
 	private Cooldown invulnTime;
 	protected Body body;
 	
-	public Bullet(int ID, Body bod) {
-		super(ID);
+	public Bullet(Body bod) {
+//		super(ID);
 		body = bod;
 		invulnTime = new Cooldown();
 		lifetime = new Cooldown();
