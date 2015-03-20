@@ -14,176 +14,101 @@ import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import com.PromethiaRP.Draeke.Asteroids.Component.Component;
+import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 
 public class GameplayScreen extends BasicGameState{
 
+	// Entities contain their components, which declare that they receive certain messages
+	// Those messages are used in the update routines
+	
 	private final int MAX_NUMBER_BULLETS = 30;
 	private final int MAX_NUMBER_ENTITIES = 100;
+	
 	private static Entity[] entities;
-	private static Component[] components;
+	private int entityOpenIndex;
 	
-	private static Bullet[] bulletPool;
-	private static int nextBulletIndex = 0;
+	// If components update via messages, just dispatch the input before update
+	private Component[] inputComponents;
+	private Component[] updateComponents;
 
-	private static List<Asteroid> asteroidPool = new ArrayList<Asteroid>();
+//	private static Bullet[] bulletPool;
+//	private static int nextBulletIndex = 0;
 
-	InputManager inputManager;
+//	private static List<Asteroid> asteroidPool = new ArrayList<Asteroid>();
+
+//	InputManager inputManager;
 	
-	Player play = new Player(400,300);
-
+//	Player play;// = new Player(400,300);
+//	int playerIndex;
 	@Override
 	public void render(GameContainer container, StateBasedGame game,Graphics grafix) throws SlickException {
 		grafix.setLineWidth(2f);
 		grafix.setColor(Color.white);
-		if (play.alive && play.isVisible()){
-			grafix.setColor(Color.black);
-			grafix.fill(play.getTransform());
-			grafix.setColor(Color.white);
-			grafix.draw(play.getTransform());
+		
+		for (Entity ent : entities) {
+			if (ent.isVisible()) {
+				grafix.setColor(Color.black);
+				grafix.fill(ent.body.getTransform());
+				grafix.setColor(Color.white);
+				grafix.draw(ent.body.getTransform());
+			}
 		}
 		
-		for (int i = 0; i < bulletPool.length; i++) {
-			if (bulletPool[i].alive) {
-				grafix.draw(bulletPool[i].getTransform());
-			}
-		}
-		for (Asteroid aster : asteroidPool) {
-			if (aster.alive){
-				grafix.setColor(Color.black);
-				grafix.fill(aster.getTransform());
-				grafix.setColor(Color.white);
-				grafix.draw(aster.getTransform());
-			}
-		}
 	}
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-		inputManager = new InputManager(container);
 		
-		inputManager.createKeyControl(Input.KEY_UP, "Forward");
-		inputManager.createKeyControl(Input.KEY_DOWN, "Backward");
-		inputManager.createKeyControl(Input.KEY_LEFT, "TurnLeft");
-		inputManager.createKeyControl(Input.KEY_RIGHT, "TurnRight");
-		inputManager.createKeyControl(Input.KEY_SPACE, "Shoot");
-		bulletPool = new Bullet[MAX_NUMBER_BULLETS];
-		initializeBullets();
+//		bulletPool = new Bullet[MAX_NUMBER_BULLETS];
+//		initializeBullets();
 		entities = new Entity[MAX_NUMBER_ENTITIES];
 		
 		initializeAsteroids();
 	}
 
 
+	public InputManager createInput(GameContainer container) {
+		
+		InputManager inputManager = new InputManager(container);
+		
+		inputManager.createKeyControl(Input.KEY_UP, "Forward");
+		inputManager.createKeyControl(Input.KEY_DOWN, "Backward");
+		inputManager.createKeyControl(Input.KEY_LEFT, "TurnLeft");
+		inputManager.createKeyControl(Input.KEY_RIGHT, "TurnRight");
+		inputManager.createKeyControl(Input.KEY_SPACE, "Shoot");
+		
+		return inputManager;
+	}
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 
 		boolean asteroidsAlive = false;
 		
-		{	// Player update block
-			float thrustForce = 1.0f;
-			if (inputManager.isControlPressed("Forward")) {
-				play.body.applyForce(thrustForce * (float)Math.cos(play.body.rotation), thrustForce * (float)Math.sin(play.body.rotation));
-			}
-			if (inputManager.isControlPressed("Backward")) {
-				play.body.applyForce(-1 *thrustForce * (float)Math.cos(play.body.rotation), -1*thrustForce * (float)Math.sin(play.body.rotation));
-			}
-			
-			
-			if (inputManager.isControlPressed("TurnLeft")) {
-				play.setRotating(-1);
-			} else if (inputManager.isControlPressed("TurnRight")) {
-				play.setRotating(1);
-			} else {
-				play.setRotating(0);
-			}
-			
-			if (inputManager.isControlPressed("Shoot")) {
-				play.setShooting(true);
-			} else {
-				play.setShooting(false);
-			}
-	
-		}
-
+		
 		for (Entity ent : entities) {
-			if (ent.body.centerX > container.getWidth()) {
-				ent.body.centerX = 0;
+			// TODO: Check the center methods from body
+			if (ent.body.getTrueCenterX() > container.getWidth()) {
+				ent.body.setPositionX(0);
 			}
-			if (ent.body.centerX < 0) {
-				ent.body.centerX = container.getWidth();
+			if (ent.body.getTrueCenterX() < 0) {
+				ent.body.setPositionX(container.getWidth());
 			}
-			if (ent.body.centerY > container.getHeight()) {
-				ent.body.centerY = 0;
+			if (ent.body.getTrueCenterY() > container.getHeight()) {
+				ent.body.setPositionY( 0);
 			}
-			if (ent.body.centerY < 0) {
-				ent.body.centerY = container.getHeight();
+			if (ent.body.getTrueCenterY() < 0) {
+				ent.body.setPositionY(container.getHeight());
 			}
+			Message msg = new UpdateMessage();
+			
 			ent.update(delta);
 		}
 		
-//		{	// Bullet update block
-//			for (int i = 0; i < bulletPool.length; i++) {
-//				if(bulletPool[i].alive){ 
-//					bulletPool[i].update(delta);
-//					if (bulletPool[i].centerX < 0) {
-//						bulletPool[i].centerX = container.getWidth();
-//					}
-//					if (bulletPool[i].centerX > container.getWidth()) {
-//						bulletPool[i].centerX = 0;
-//					}
-//					if (bulletPool[i].centerY < 0) {
-//						bulletPool[i].centerY = container.getHeight();
-//					}
-//					if (bulletPool[i].centerY > container.getHeight()) {
-//						bulletPool[i].centerY = 0;
-//					}
-//				}
-//			}
-//		}
-
-//		{	// Asteroid update block
-//			for (int j = 0; j < asteroidPool.size(); j++) {
-//				Asteroid aster = asteroidPool.get(j);
-//				if (aster.alive) {
-//					asteroidsAlive = true;
-//				} else {
-//					continue;
-//				}
-//				if (aster.doesCollide(play)) {
-//					aster.collide(play);
-//					play.collide(aster);
-//				}
-//				for (int i = 0; i < bulletPool.length; i++) {
-//					if (bulletPool[i].alive) {
-//						if (aster.doesCollide(bulletPool[i])) {
-//							aster.collide(bulletPool[i]);
-//							bulletPool[i].collide(aster);
-//						}
-//						
-//					}
-//				}
-//				
-//				aster.update(delta);
-//				
-//				if (aster.centerX < 0){
-//					aster.centerX = container.getWidth();
-//				}
-//				if (aster.centerX > container.getWidth()) {
-//					aster.centerX = 0;
-//				}
-//				if (aster.centerY > container.getHeight()) {
-//					aster.centerY = 0;
-//				}
-//				if (aster.centerY < 0) {
-//					aster.centerY = container.getHeight();
-//				}
-//			}
-//		}
 		
 		{	// Game status update block
-			if (! play.isAlive()) {
-				game.enterState(MainApplication.GAMEOVER_SCREEN, new FadeOutTransition(), new FadeInTransition());
-			}
+//			if (! play.isAlive()) {
+//				game.enterState(MainApplication.GAMEOVER_SCREEN, new FadeOutTransition(), new FadeInTransition());
+//			}
 			if (! asteroidsAlive) {
 				
 			}

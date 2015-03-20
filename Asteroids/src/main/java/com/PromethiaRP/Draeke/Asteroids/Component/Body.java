@@ -4,12 +4,14 @@ import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Transform;
 
+import com.PromethiaRP.Draeke.Asteroids.Entity;
+
 public class Body extends Component{
 
-//	public Body() {
-//		
-//		
-//	}
+	public Body(Entity en) {
+		super(en);
+		
+	}
 
 	
 	protected Polygon structure;
@@ -67,6 +69,37 @@ public class Body extends Component{
 	public float getTrueCenterX() {
 		return centerX + centerOffsetX;
 	}
+	
+	public void setPositionX(float x) {
+		this.centerX = x;
+	}
+	public void setPositionY(float y) {
+		this.centerY = y;
+	}
+	public void setRotation(float r) {
+		this.rotation = r;
+	}
+	public float getRotation() {
+		return this.rotation;
+	}
+	public void setVelocityX(float x) {
+		this.velocityX = x;
+	}
+	public void setVelocityY(float y) {
+		this.velocityY = y;
+	}
+	public float getVelocityX() {
+		return this.velocityX;
+	}
+	public float getVelocityY() {
+		return this.velocityY;
+	}
+	public void setVelocityR(float r) {
+		this.velocityR = r;
+	}
+	public float getVelocityR() {
+		return this.velocityR;
+	}
 	/**
 	 * 
 	 * @return The actual center y coordinate
@@ -78,6 +111,22 @@ public class Body extends Component{
 	public void applyForce(float forceX, float forceY) {
 		this.forceX += forceX;
 		this.forceY += forceY;
+	}
+	
+	public void applyForwardForce(float force) {
+		float forceX = force * (float)Math.cos(rotation);
+		float forceY = force * (float)Math.sin(rotation);
+		applyForce(forceX, forceY);
+	}
+	
+	/**
+	 * Applies a force at PI/2 radians to rotation
+	 * @param force
+	 */
+	public void applySidewaysForce(float force) {
+		float forceX = force * (float)Math.cos(rotation + Math.PI/2);
+		float forceY = force * (float)Math.sin(rotation + Math.PI/2);
+		applyForce(forceX, forceY);
 	}
 	
 	public void update(int delta) {

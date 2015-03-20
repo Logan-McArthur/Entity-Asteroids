@@ -1,7 +1,14 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.PromethiaRP.Draeke.Asteroids.Component.Body;
+import com.PromethiaRP.Draeke.Asteroids.Component.Component;
 import com.PromethiaRP.Draeke.Asteroids.Component.Health;
+import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
+import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 
 public abstract class Entity {
 
@@ -12,15 +19,18 @@ public abstract class Entity {
 	protected float accelModifier = .001f;
 	protected float maxSpeed = 1.2f;
 	
+//	protected Map<MessageType, Component> messageMap;
 	
-	protected float accelerationX = 0.0f;
-	protected float accelerationY = 0.0f;
+//	protected float accelerationX = 0.0f;
+//	protected float accelerationY = 0.0f;
 	
-	protected float accelerationDirection = 0.0f;
+//	protected float accelerationDirection = 0.0f;
 	
 	protected Body body;
 	protected Health hitPoints;// = new Health();
 	
+	
+	protected Set<Component> components = new HashSet<Component>();
 	
 //	public Entity(int ID) {
 //		entityID = ID;
@@ -30,6 +40,9 @@ public abstract class Entity {
 		
 	}
 	
+	public void addComponent(Component cp) {
+		components.add(cp);
+	}
 	/**
 	 * Sets the base rotation speed
 	 * Can be either 1, 0, or -1
@@ -83,5 +96,15 @@ public abstract class Entity {
 	public boolean isAlive() {
 		
 		return hitPoints.isAlive();
+	}
+	
+	public void dispatchMessage(MessageType msgType, Message msg) {
+		// TODO: Two types, input and update?
+		// For the game loop though, that way the input type components are updated before others
+		for (Component cp : components) {
+			if (cp.receives(msgType)) {
+				cp.handleMessage(msgType, msg);
+			}			
+		}
 	}
 }

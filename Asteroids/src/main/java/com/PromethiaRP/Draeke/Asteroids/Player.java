@@ -50,11 +50,11 @@ public class Player extends Entity{
 		for (int i = 0; i < allocated.length; i++) {
 			Body allocBod = allocated[i].body;
 			
-			allocBod.centerX = coords[0];
-			allocBod.centerY = coords[1];
-			allocBod.velocityX = body.velocityX;
-			allocBod.velocityY = body.velocityY;
-			allocBod.rotation = body.rotation + currentWeapon.SHOT_ANGLES[i];
+			allocBod.setPositionX(coords[0]);
+			allocBod.setPositionY(coords[1]);
+			allocBod.setVelocityX(body.getVelocityX());
+			allocBod.setVelocityY(body.getVelocityY());
+			allocBod.setRotation(body.getRotation() + currentWeapon.SHOT_ANGLES[i]);
 			allocated[i].start(currentWeapon.BULLET_LIFE);
 //			allocated[i].recycle(coords[0], coords[1], body.velocityX, body.velocityY, body.rotation+currentWeapon.SHOT_ANGLES[i], currentWeapon.BULLET_LIFE);
 		}
