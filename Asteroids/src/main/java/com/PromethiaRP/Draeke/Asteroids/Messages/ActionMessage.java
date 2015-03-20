@@ -4,8 +4,7 @@ public class ActionMessage extends Message{
 
 	public boolean perform;
 	
-	public ActionMessage(String type, boolean perform) {
-		super(type);
+	public ActionMessage(boolean perform) {
 		this.perform = perform;
 	}
 }

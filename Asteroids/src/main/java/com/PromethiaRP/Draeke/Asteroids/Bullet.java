@@ -6,11 +6,10 @@ public class Bullet extends Entity{
 
 	private Cooldown lifetime;
 	private Cooldown invulnTime;
-	protected Body body;
-	
-	public Bullet(Body bod) {
+
+	public Bullet() {
 //		super(ID);
-		body = bod;
+		
 		invulnTime = new Cooldown();
 		lifetime = new Cooldown();
 //		setStructure(new float[]{0,0, 5,1, 5,4, 0,5}, 2.5f, 2.5f, 1);

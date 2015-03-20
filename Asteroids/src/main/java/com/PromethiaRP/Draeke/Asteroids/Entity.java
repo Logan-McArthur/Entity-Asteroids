@@ -26,9 +26,12 @@ public abstract class Entity {
 	
 //	protected float accelerationDirection = 0.0f;
 	
-	protected Body body;
-	protected Health hitPoints;// = new Health();
+//	protected Body body;
+//	protected Health hitPoints;// = new Health();
 	
+	protected boolean alive;
+	
+	protected Set<MessageType> messageTypes = new HashSet<MessageType>();
 	
 	protected Set<Component> components = new HashSet<Component>();
 	
@@ -42,7 +45,13 @@ public abstract class Entity {
 	
 	public void addComponent(Component cp) {
 		components.add(cp);
+		cp.setEntityContainer(this);
 	}
+	
+	public void addListening(Set<MessageType> messages) {
+		messageTypes.addAll(messages);
+	}
+	
 	/**
 	 * Sets the base rotation speed
 	 * Can be either 1, 0, or -1
@@ -73,9 +82,9 @@ public abstract class Entity {
 	
 	
 	
-	public boolean doesCollide(Entity other) {
-		return body.getTransform().intersects(other.body.getTransform()) && isAlive() && other.isAlive();
-	}
+//	public boolean doesCollide(Entity other) {
+//		return body.getTransform().intersects(other.body.getTransform()) && isAlive() && other.isAlive();
+//	}
 	
 	
 	
@@ -94,13 +103,12 @@ public abstract class Entity {
 	public abstract void collide(Entity other);
 	
 	public boolean isAlive() {
-		
-		return hitPoints.isAlive();
+		// Alive should be set by the health component through the message system?
+		return alive;
 	}
 	
 	public void dispatchMessage(MessageType msgType, Message msg) {
-		// TODO: Two types, input and update?
-		// For the game loop though, that way the input type components are updated before others
+		// Dispatches a message to all components that will receive it.
 		for (Component cp : components) {
 			if (cp.receives(msgType)) {
 				cp.handleMessage(msgType, msg);

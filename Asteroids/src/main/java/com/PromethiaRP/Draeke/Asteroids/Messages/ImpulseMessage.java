@@ -2,10 +2,13 @@ package com.PromethiaRP.Draeke.Asteroids.Messages;
 
 public class ImpulseMessage extends Message {
 
-	public float force;
+	public float forwardForce;
+	public float sidewaysForce;
+	public float torque;
 	
-	public ImpulseMessage(String type, float force) {
-		super(type);
-		this.force = force;
+	public ImpulseMessage(float forwardForce, float sidewaysForce, float torque) {
+		this.forwardForce = forwardForce;
+		this.sidewaysForce = sidewaysForce;
+		this.torque = torque;
 	}
 }

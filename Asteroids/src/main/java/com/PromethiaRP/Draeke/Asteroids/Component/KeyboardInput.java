@@ -1,6 +1,5 @@
 package com.PromethiaRP.Draeke.Asteroids.Component;
 
-import com.PromethiaRP.Draeke.Asteroids.Entity;
 import com.PromethiaRP.Draeke.Asteroids.InputManager;
 import com.PromethiaRP.Draeke.Asteroids.Messages.ActionMessage;
 import com.PromethiaRP.Draeke.Asteroids.Messages.ImpulseMessage;
@@ -11,8 +10,7 @@ public class KeyboardInput extends Component {
 
 	InputManager inputManager;
 	
-	public KeyboardInput(Entity en, InputManager in) {
-		super(en);
+	public KeyboardInput(InputManager in) {
 		inputManager = in;
 	}
 
@@ -20,6 +18,7 @@ public class KeyboardInput extends Component {
 	public void update(int delta) {
 		float thrustForce = 1.0f;
 		float torque = 1.0f;
+		float sideForce = .8f;
 		int turnThrust = 0;
 		int forwardThrust = 0;
 		int sidewaysThrust = 0;
@@ -51,20 +50,15 @@ public class KeyboardInput extends Component {
 //			play.setShooting(false);
 //		}
 		shoot = inputManager.isControlPressed("Shoot");
-		Message msgAction = new ActionMessage("Shoot", shoot);
-		entity.dispatchMessage(MessageType.ACTION, msgAction);
-		
+		Message msgAction = new ActionMessage(shoot);
+		entity.dispatchMessage(MessageType.ACTION_SHOOT, msgAction);
+		Message impulseMessage = new ImpulseMessage(thrustForce * forwardThrust, sideForce * sidewaysThrust, torque * turnThrust);
+		entity.dispatchMessage(MessageType.IMPULSE, impulseMessage);
 	}
 
 	
 	public void handleMessage(MessageType type, Message msg) {
 		// This component does not receive messages
-	}
-
-	@Override
-	public boolean receives(MessageType type) {
-		// No messages
-		return false;
 	}
 	
 }

@@ -1,12 +1,17 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
-public class Cooldown {
+import com.PromethiaRP.Draeke.Asteroids.Component.Component;
+import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
+import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
+
+public class Cooldown extends Component {
 
 	private boolean counting;
 	private int count;
 	
-	
-	public Cooldown() {}
+	public Cooldown() {
+		messageTypes.add(MessageType.UPDATE_DELTA);
+	}
 	
 	public void start(int cooldownLength) {
 		counting = true;
@@ -37,5 +42,10 @@ public class Cooldown {
 	
 	public boolean counting() {
 		return counting;
+	}
+
+	@Override
+	public void handleMessage(MessageType type, Message msg) {
+		
 	}
 }

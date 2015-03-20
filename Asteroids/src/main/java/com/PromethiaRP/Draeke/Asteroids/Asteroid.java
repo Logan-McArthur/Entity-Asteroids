@@ -6,30 +6,24 @@ import com.PromethiaRP.Draeke.Asteroids.Component.Health;
 public class Asteroid extends Entity{
 	
 	private AsteroidSize size;
-	protected Health hitPoints;
-	protected Body body;
-//	public Asteroid(int ID, AsteroidSize size, Body body, Health health) {
-//		super(ID);
-//		
-//		this.body = body;
-//		
-//		// TODO: Move initialization to the place where the component is created
-////		float[] points = new float[]{15,8, 10,0,1,3,1,12,10,15};
-////		
-////		this.size = size;
-////		
-////		body.scaleX = size.scaleX;
-////		body.scaleY = size.scaleY;
-////		body.setStructure(points, 7.5f, 7.5f, 0);
-////
-////		alive = false;
-////		
-////		maxSpeed = 0.6f;
-//	}
-	
-	public Asteroid(AsteroidSize size, Body bod, Health health) {
-		this.body = bod;
+
+	public Asteroid(AsteroidSize size) {
+		
+		
+		// TODO: Move initialization to the place where the component is created
+		float[] points = new float[]{15,8, 10,0,1,3,1,12,10,15};
+		
+		this.size = size;
+		
+		body.scaleX = size.scaleX;
+		body.scaleY = size.scaleY;
+		body.setStructure(points, 7.5f, 7.5f, 0);
+
+		alive = false;
+		
+		maxSpeed = 0.6f;
 	}
+
 	private void spawnOffspring() {
 		Asteroid[] asteroids = GameplayScreen.allocateAsteroids(size.numberOfOffspring);
 		for (int i = 0; i < asteroids.length; i++) {
@@ -60,7 +54,7 @@ public class Asteroid extends Entity{
 
 	@Override
 	public boolean isAlive() {
-		return hitPoints.isAlive();
+		return alive;
 	}
 	
 //	public void recycle(float xPosition, float yPosition, AsteroidSize size, float direction) {

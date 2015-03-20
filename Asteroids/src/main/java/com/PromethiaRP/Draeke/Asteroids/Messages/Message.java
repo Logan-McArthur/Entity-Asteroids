@@ -1,9 +1,8 @@
 package com.PromethiaRP.Draeke.Asteroids.Messages;
 
-public class Message {
-	public String type;
+public abstract class Message {
 	
-	public Message(String type) {
-		this.type = type;
+	public Message() {
+		
 	}
 }

@@ -1,6 +1,5 @@
 package com.PromethiaRP.Draeke.Asteroids.Component;
 
-import com.PromethiaRP.Draeke.Asteroids.Entity;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 
@@ -8,8 +7,7 @@ import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 public class Health extends Component{
 
 	private int lifePoints;
-	public Health(Entity en, int life) {
-		super(en);
+	public Health(int life) {
 		lifePoints = life;
 	}
 	@Override

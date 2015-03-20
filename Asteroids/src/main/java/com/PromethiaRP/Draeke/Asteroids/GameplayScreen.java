@@ -15,6 +15,8 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import com.PromethiaRP.Draeke.Asteroids.Component.Component;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
+import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
+import com.PromethiaRP.Draeke.Asteroids.Messages.UpdateMessage;
 
 public class GameplayScreen extends BasicGameState{
 
@@ -99,7 +101,7 @@ public class GameplayScreen extends BasicGameState{
 			if (ent.body.getTrueCenterY() < 0) {
 				ent.body.setPositionY(container.getHeight());
 			}
-			Message msg = new UpdateMessage();
+			Message msg = new UpdateMessage("", delta);
 			
 			ent.update(delta);
 		}
@@ -117,6 +119,11 @@ public class GameplayScreen extends BasicGameState{
 		
 	}
 
+	public void broadcastMessage(MessageType type, Message msg) {
+		for (Entity ent : entities) {
+			ent.dispatchMessage(type, msg);
+		}
+	}
 	
 	private void initializeBullets() {
 		for (int i = 0; i < bulletPool.length; i++) {
@@ -125,7 +132,8 @@ public class GameplayScreen extends BasicGameState{
 	}
 
 	private Bullet constructBullet(float xPos, float yPos) {
-		Bullet blt = 
+		Bullet blt = new Bullet();
+		
 	}
 	
 	public static Bullet[] allocateBullets(int number) {

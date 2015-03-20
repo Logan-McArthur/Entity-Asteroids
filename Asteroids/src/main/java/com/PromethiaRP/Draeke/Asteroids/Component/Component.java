@@ -1,5 +1,8 @@
 package com.PromethiaRP.Draeke.Asteroids.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.PromethiaRP.Draeke.Asteroids.Entity;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
@@ -13,16 +16,26 @@ public abstract class Component {
 	
 	protected Entity entity;
 	
-	public Component(Entity en) {
-		entity = en;
+	protected Set<MessageType> messageTypes = new HashSet<MessageType>();
+	
+	public Component() {
+		
 	}
-//	public int getEntityID() {
-//		return componentID;
-//	}
+	
+	public void setEntityContainer(Entity ent) {
+		entity = ent;
+		ent.addListening(messageTypes);
+	}
+	
+	public Set<MessageType> getListeningFor() {
+		return messageTypes;
+	}
 	
 	public abstract void update(int delta);
 	
 	public abstract void handleMessage(MessageType type, Message msg);
 	
-	public abstract boolean receives(MessageType type);
+	public boolean receives(MessageType type) {
+		return messageTypes.contains(type);
+	}
 }
