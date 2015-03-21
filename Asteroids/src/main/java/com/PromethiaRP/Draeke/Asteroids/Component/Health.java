@@ -1,5 +1,7 @@
 package com.PromethiaRP.Draeke.Asteroids.Component;
 
+import com.PromethiaRP.Draeke.Asteroids.Exceptions.IllegalMessageException;
+import com.PromethiaRP.Draeke.Asteroids.Messages.InteractionHurtMessage;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 
@@ -9,14 +11,11 @@ public class Health extends Component{
 	private int lifePoints;
 	public Health(int life) {
 		lifePoints = life;
-	}
-	@Override
-	public void update(int delta) {
-		
+		this.messageTypes.add(MessageType.HURT_INTERACTION);
 	}
 
 	public boolean isAlive() {
-		return lifePoints == 0;
+		return lifePoints > 0;
 	}
 	
 	/**
@@ -34,7 +33,20 @@ public class Health extends Component{
 	}
 	@Override
 	public void handleMessage(MessageType type, Message msg) {
-		// TODO Auto-generated method stub
-		
+		switch (type) {
+		case HURT_INTERACTION:
+			if (msg instanceof InteractionHurtMessage) {
+				InteractionHurtMessage ihg = (InteractionHurtMessage) msg;
+				if (!hurt(ihg.damage)) {
+					entity.kill();
+				}
+			} else {
+				throw new IllegalMessageException("Health did not receive InteractionHurtMessage with the corresponding type HURT_INTERACTION");
+			}
+			break;
+		default:
+			
+			break;
+		}
 	}
 }

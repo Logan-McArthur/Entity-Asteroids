@@ -1,6 +1,5 @@
-package com.PromethiaRP.Draeke.Asteroids;
+package com.PromethiaRP.Draeke.Asteroids.Component;
 
-import com.PromethiaRP.Draeke.Asteroids.Component.Component;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 

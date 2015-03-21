@@ -45,7 +45,7 @@ public class MainApplication extends StateBasedGame {
 
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		addState(new TitleScreen());
+		//addState(new TitleScreen());
 		addState(new GameplayScreen());
 		addState(new CreditsScreen());
 		addState(new GameOverScreen());

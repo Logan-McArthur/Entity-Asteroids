@@ -12,6 +12,8 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
+import com.PromethiaRP.Draeke.Asteroids.Component.Cooldown;
+
 public class TitleScreen extends BasicGameState{
 
 	private List<Asteroid> asteroids = new ArrayList<Asteroid>();

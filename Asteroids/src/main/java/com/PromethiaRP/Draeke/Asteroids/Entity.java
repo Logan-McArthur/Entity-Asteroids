@@ -1,12 +1,9 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import com.PromethiaRP.Draeke.Asteroids.Component.Body;
 import com.PromethiaRP.Draeke.Asteroids.Component.Component;
-import com.PromethiaRP.Draeke.Asteroids.Component.Health;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 
@@ -14,10 +11,7 @@ public abstract class Entity {
 
 //	protected int entityID;
 //	
-	protected float speedModifier = .2f;
-	protected float turnSpeedModifier = .0025f;
-	protected float accelModifier = .001f;
-	protected float maxSpeed = 1.2f;
+	
 	
 //	protected Map<MessageType, Component> messageMap;
 	
@@ -29,11 +23,18 @@ public abstract class Entity {
 //	protected Body body;
 //	protected Health hitPoints;// = new Health();
 	
-	protected boolean alive;
+	protected boolean alive = true;
 	
 	protected Set<MessageType> messageTypes = new HashSet<MessageType>();
 	
 	protected Set<Component> components = new HashSet<Component>();
+	
+	/**
+	 * Sets alive to false, does nothing else
+	 */
+	public void kill() {
+		alive = false;
+	}
 	
 //	public Entity(int ID) {
 //		entityID = ID;

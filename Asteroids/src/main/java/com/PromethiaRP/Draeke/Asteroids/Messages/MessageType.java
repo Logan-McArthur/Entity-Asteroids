@@ -2,10 +2,13 @@ package com.PromethiaRP.Draeke.Asteroids.Messages;
 
 public enum MessageType {
 IMPULSE,
+MOVE,
 ACTION_SHOOT,
+WEAPON_FIRE,
 UPDATE_INPUT,
 UPDATE_DELTA,
-HURT_HOSTILE,
-HURT_SELF;
+HURT_INTERACTION,
+HURT_ENVIRONMENT,
+RENDER;
 
 }

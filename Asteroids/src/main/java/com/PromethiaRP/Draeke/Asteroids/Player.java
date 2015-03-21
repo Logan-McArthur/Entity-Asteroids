@@ -1,7 +1,9 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
-import com.PromethiaRP.Draeke.Asteroids.Component.Body;
-import com.PromethiaRP.Draeke.Asteroids.Component.Health;
+import com.PromethiaRP.Draeke.Asteroids.Component.Cooldown;
+import com.PromethiaRP.Draeke.Asteroids.Messages.InteractionHurtMessage;
+import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
+import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 
 public class Player extends Entity{
 
@@ -16,11 +18,8 @@ public class Player extends Entity{
 	
 	private Weapon currentWeapon = Weapon.SINGLE;
 	
-	public Player(Body bod, Health health) {
+	public Player() {
 
-		this.body = bod;
-		this.hitPoints = health;
-		
 		weaponCooler = new Cooldown();
 		animation = new BlinkAnimation();
 	}
@@ -44,49 +43,48 @@ public class Player extends Entity{
 		firingWeapon = shooting;
 	}
 	
-	private void fireWeapon() {
-		float[] coords = body.getTransform().getPoint(1);
-		Bullet[] allocated = GameplayScreen.allocateBullets(currentWeapon.NUMBER_SHOTS);
-		for (int i = 0; i < allocated.length; i++) {
-			Body allocBod = allocated[i].body;
-			
-			allocBod.setPositionX(coords[0]);
-			allocBod.setPositionY(coords[1]);
-			allocBod.setVelocityX(body.getVelocityX());
-			allocBod.setVelocityY(body.getVelocityY());
-			allocBod.setRotation(body.getRotation() + currentWeapon.SHOT_ANGLES[i]);
-			allocated[i].start(currentWeapon.BULLET_LIFE);
-//			allocated[i].recycle(coords[0], coords[1], body.velocityX, body.velocityY, body.rotation+currentWeapon.SHOT_ANGLES[i], currentWeapon.BULLET_LIFE);
-		}
-		
-		weaponCooler.start(currentWeapon.COOLDOWN);
-	}
+//	private void fireWeapon() {
+//		float[] coords = body.getTransform().getPoint(1);
+//		Bullet[] allocated = GameplayScreen.allocateBullets(currentWeapon.NUMBER_SHOTS);
+//		for (int i = 0; i < allocated.length; i++) {
+//			Body allocBod = allocated[i].body;
+//			
+//			allocBod.setPositionX(coords[0]);
+//			allocBod.setPositionY(coords[1]);
+//			allocBod.setVelocityX(body.getVelocityX());
+//			allocBod.setVelocityY(body.getVelocityY());
+//			allocBod.setRotation(body.getRotation() + currentWeapon.SHOT_ANGLES[i]);
+//			allocated[i].start(currentWeapon.BULLET_LIFE);
+////			allocated[i].recycle(coords[0], coords[1], body.velocityX, body.velocityY, body.rotation+currentWeapon.SHOT_ANGLES[i], currentWeapon.BULLET_LIFE);
+//		}
+//		
+//		weaponCooler.start(currentWeapon.COOLDOWN);
+//	}
 	
 	@Override
 	public void update(int delta) {
-		weaponCooler.update(delta);
-		animation.update(delta);
-		
-		if (firingWeapon) {
-			if (! weaponCooler.counting() && ! animation.running()) {
-				fireWeapon();
-			}
-		}
+//		weaponCooler.update(delta);
+//		animation.update(delta);
+//		
+//		if (firingWeapon) {
+//			if (! weaponCooler.counting() && ! animation.running()) {
+//				//fireWeapon();
+//			}
+//		}
 		
 		// Have the components update separately from the entities?
 //		accelerate();
 //		move(delta);
 	}
 	
-	private void damage() {
-		hitPoints.hurt(1);
-	}
 	
 	@Override
 	public void collide(Entity other) {
 		if (other instanceof Asteroid) {
 			if ( ! animation.running()) {
-				damage();
+				//damage();
+				Message msg = new InteractionHurtMessage(other, 1);
+				this.dispatchMessage(MessageType.HURT_INTERACTION, msg);
 			}
 		}
 	}

@@ -31,7 +31,7 @@ public abstract class Component {
 		return messageTypes;
 	}
 	
-	public abstract void update(int delta);
+	//public abstract void update(int delta);
 	
 	public abstract void handleMessage(MessageType type, Message msg);
 	

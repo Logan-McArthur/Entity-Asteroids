@@ -1,5 +1,7 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
+import com.PromethiaRP.Draeke.Asteroids.Component.Cooldown;
+
 public class BlinkAnimation {
 	private int blinkNumber;
 	

@@ -1,10 +1,12 @@
 package com.PromethiaRP.Draeke.Asteroids.Component;
 
 import com.PromethiaRP.Draeke.Asteroids.InputManager;
+import com.PromethiaRP.Draeke.Asteroids.Exceptions.IllegalMessageException;
 import com.PromethiaRP.Draeke.Asteroids.Messages.ActionMessage;
 import com.PromethiaRP.Draeke.Asteroids.Messages.ImpulseMessage;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
+import com.PromethiaRP.Draeke.Asteroids.Messages.UpdateMessage;
 
 public class KeyboardInput extends Component {
 
@@ -12,12 +14,13 @@ public class KeyboardInput extends Component {
 	
 	public KeyboardInput(InputManager in) {
 		inputManager = in;
+		this.messageTypes.add(MessageType.UPDATE_INPUT);
 	}
 
-	@Override
-	public void update(int delta) {
-		float thrustForce = 1.0f;
-		float torque = 1.0f;
+	
+	public void pollInput() {
+		float thrustForce = .10f;
+		float torque = .10f;
 		float sideForce = .8f;
 		int turnThrust = 0;
 		int forwardThrust = 0;
@@ -44,11 +47,7 @@ public class KeyboardInput extends Component {
 		//	play.body.setVelocityR(0);
 		//}
 		
-//		if (inputManager.isControlPressed("Shoot")) {
-//			play.setShooting(true);
-//		} else {
-//			play.setShooting(false);
-//		}
+
 		shoot = inputManager.isControlPressed("Shoot");
 		Message msgAction = new ActionMessage(shoot);
 		entity.dispatchMessage(MessageType.ACTION_SHOOT, msgAction);
@@ -58,7 +57,18 @@ public class KeyboardInput extends Component {
 
 	
 	public void handleMessage(MessageType type, Message msg) {
-		// This component does not receive messages
+		switch (type) {
+		case UPDATE_INPUT:
+			if (msg instanceof UpdateMessage) {
+				pollInput();
+			} else {
+				throw new IllegalMessageException("KeyboardInput did not receive UpdateMessage with the corresponding type UPDATE_INPUT");
+			}
+			break;
+		default:
+			
+			break;
+		}
 	}
 	
 }
