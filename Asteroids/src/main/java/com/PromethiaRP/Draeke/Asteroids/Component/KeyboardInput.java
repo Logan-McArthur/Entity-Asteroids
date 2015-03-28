@@ -1,5 +1,6 @@
 package com.PromethiaRP.Draeke.Asteroids.Component;
 
+import com.PromethiaRP.Draeke.Asteroids.GameWorld;
 import com.PromethiaRP.Draeke.Asteroids.InputManager;
 import com.PromethiaRP.Draeke.Asteroids.Exceptions.IllegalMessageException;
 import com.PromethiaRP.Draeke.Asteroids.Messages.ActionMessage;
@@ -19,8 +20,8 @@ public class KeyboardInput extends Component {
 
 	
 	public void pollInput() {
-		float thrustForce = .10f;
-		float torque = .10f;
+		float thrustForce = 1f;
+		float torque = 1f;
 		float sideForce = .8f;
 		int turnThrust = 0;
 		int forwardThrust = 0;
@@ -39,9 +40,16 @@ public class KeyboardInput extends Component {
 		if (inputManager.isControlPressed("TurnLeft")) {
 			turnThrust += -1;
 			//play.body.setVelocityR(-1);
-		} else if (inputManager.isControlPressed("TurnRight")) {
+		}
+		if (inputManager.isControlPressed("TurnRight")) {
 			turnThrust += 1;
 			//play.body.setVelocityR(1);
+		}
+		if (inputManager.isControlPressed("StrafeLeft")) {
+			sidewaysThrust += -1;	// Remember, +y is down
+		}
+		if (inputManager.isControlPressed("StrafeRight")) {
+			sidewaysThrust += 1;
 		}
 		//else {
 		//	play.body.setVelocityR(0);
@@ -56,7 +64,7 @@ public class KeyboardInput extends Component {
 	}
 
 	
-	public void handleMessage(MessageType type, Message msg) {
+	public void handleMessage(GameWorld gameWorld, MessageType type, Message msg) {
 		switch (type) {
 		case UPDATE_INPUT:
 			if (msg instanceof UpdateMessage) {

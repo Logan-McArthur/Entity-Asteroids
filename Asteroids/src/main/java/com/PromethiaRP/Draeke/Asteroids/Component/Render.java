@@ -4,6 +4,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Shape;
 
+import com.PromethiaRP.Draeke.Asteroids.GameWorld;
 import com.PromethiaRP.Draeke.Asteroids.Exceptions.IllegalMessageException;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
@@ -19,7 +20,7 @@ public class Render extends Component {
 	}
 	
 	@Override
-	public void handleMessage(MessageType type, Message msg) {
+	public void handleMessage(GameWorld gameWorld, MessageType type, Message msg) {
 		
 		switch (type) {
 		case RENDER:

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.PromethiaRP.Draeke.Asteroids.Entity;
+import com.PromethiaRP.Draeke.Asteroids.GameWorld;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 
@@ -27,13 +28,19 @@ public abstract class Component {
 		ent.addListening(messageTypes);
 	}
 	
+	public void addAllTypes(MessageType... msgs) {
+		for (MessageType typ : msgs) {
+			messageTypes.add(typ);
+		}
+	}
+	
 	public Set<MessageType> getListeningFor() {
 		return messageTypes;
 	}
 	
 	//public abstract void update(int delta);
 	
-	public abstract void handleMessage(MessageType type, Message msg);
+	public abstract void handleMessage(GameWorld gameWorld, MessageType type, Message msg);
 	
 	public boolean receives(MessageType type) {
 		return messageTypes.contains(type);

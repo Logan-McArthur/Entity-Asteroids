@@ -1,5 +1,8 @@
 package com.PromethiaRP.Draeke.Asteroids.Component;
 
+import org.newdawn.slick.geom.Vector2f;
+
+import com.PromethiaRP.Draeke.Asteroids.GameWorld;
 import com.PromethiaRP.Draeke.Asteroids.Exceptions.IllegalMessageException;
 import com.PromethiaRP.Draeke.Asteroids.Messages.ImpulseMessage;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
@@ -13,21 +16,24 @@ public class Physics extends Component{
 	
 	protected float speedModifier = .2f;
 	protected float turnSpeedModifier = .0035f;
-	protected float accelModifier = .001f;
-	protected float maxSpeed = 1.2f;
-	
+	protected float accelModifier = .1f;
+	protected float accelRModifier = .08f;
+	protected float maxSpeed = 2f;
+	protected float dragFactor = 1f;
 	// Physics fields
 	protected float invMass;
 	protected float invMoment;
 	
 	// How the Body moves through space
-	protected float velocityX = 0.0f;
-	protected float velocityY = 0.0f;
+//	protected float velocityX = 0.0f;
+//	protected float velocityY = 0.0f;
+	protected Vector2f velocity = new Vector2f(0.0f, 0.0f);
 	protected float velocityR = 0.0f;
 
 	// How the Body accelerates
-	protected float forceX = 0.0f;
-	protected float forceY = 0.0f;
+//	protected float forceX = 0.0f;
+//	protected float forceY = 0.0f;
+	protected Vector2f force = new Vector2f(0.0f, 0.0f);
 	protected float torque = 0.0f;
 	
 	protected Structure struct;
@@ -40,9 +46,15 @@ public class Physics extends Component{
 		messageTypes.add(MessageType.UPDATE_DELTA);
 	}
 	
+	public void setDrag(float percent) {
+		this.dragFactor = percent;
+	}
+	public float getDrag() {
+		return dragFactor;
+	}
+	
 	public void applyDrag(float percent) {
-		velocityX *= percent;
-		velocityY *= percent;
+		velocity.scale(percent);
 		velocityR *= percent;
 	}
 	
@@ -70,36 +82,48 @@ public class Physics extends Component{
 	
 	
 	// Setters for Movement fields
-	public void setVelocityX(float x) {
-		this.velocityX = x;
-	}
-	public void setVelocityY(float y) {
-		this.velocityY = y;
+//	public void setVelocityX(float x) {
+//		this.velocity.x = x;
+//	}
+//	public void setVelocityY(float y) {
+//		this.velocity.y = y;
+//	}
+	public void setVelocity(Vector2f vel) {
+		this.velocity.set(vel);
 	}
 	public void setVelocityR(float r) {
 		this.velocityR = r;
 	}
-	public void setVelocity(float velX, float velY, float velR) {
-		velocityX = velX;
-		velocityY = velY;
+	public void setVelocity(Vector2f vel, float velR) {
+		setVelocity(vel);
 		velocityR = velR;
 	}
 	
 	// Getters for Movement fields
 	public float getVelocityX() {
-		return this.velocityX;
+		return this.velocity.x;
 	}
 	public float getVelocityY() {
-		return this.velocityY;
+		return this.velocity.y;
+	}
+	/** 
+	 * Returns an immutable copy of the velocity vector
+	 * @return velocity
+	 */
+	public Vector2f getVelocity() {
+		return velocity.copy();
 	}
 	public float getVelocityR() {
 		return this.velocityR;
 	}
 	
 	
-	public void applyForce(float forceX, float forceY) {
-		this.forceX += forceX;
-		this.forceY += forceY;
+//	public void applyForce(float forceX, float forceY) {
+//		this.forceX += forceX;
+//		this.forceY += forceY;
+//	}
+	public void applyForce(Vector2f force) {
+		this.force.add(force);
 	}
 	
 	public void applyTorque(float torque) {
@@ -109,7 +133,8 @@ public class Physics extends Component{
 	public void applyForwardForce(float force) {
 		float forceX = force * (float)Math.cos(struct.getRotation());
 		float forceY = force * (float)Math.sin(struct.getRotation());
-		applyForce(forceX, forceY);
+		Vector2f apply = new Vector2f(forceX, forceY);
+		applyForce(apply);
 	}
 	
 	/**
@@ -119,41 +144,37 @@ public class Physics extends Component{
 	public void applySidewaysForce(float force) {
 		float forceX = force * (float)Math.cos(struct.getRotation() + Math.PI/2);
 		float forceY = force * (float)Math.sin(struct.getRotation() + Math.PI/2);
-		applyForce(forceX, forceY);
+		Vector2f apply = new Vector2f(forceX, forceY);
+		applyForce(apply);
 	}
 	
 	public void update(int delta) {
 
 		
+		Vector2f acceleration = force.scale(invMass * accelModifier);
+//		float accelerationX = invMass * forceX * accelModifier;
+//		float accelerationY = invMass * forceY * accelModifier;
+		float accelerationR = invMoment * torque * accelRModifier;
 		
-		float accelerationX = invMass * forceX;
-		float accelerationY = invMass * forceY;
-		float accelerationR = invMoment * torque;
-		
-		//float accelMag2 = accelerationX * accelerationX + accelerationY * accelerationY;
-		//float accelMag = (float)Math.sqrt(accelMag2);
-		
-		//if (Math.abs(velocityX + accelerationX * delta) < maxSpeed) {
-			velocityX += accelerationX ;
-		//}
-		//if (Math.abs(velocityY + accelerationY * delta) < maxSpeed) {
-			velocityY += accelerationY ;
-		//}
+		if (velocity.copy().add(acceleration).length() < maxSpeed){
+			velocity.add(acceleration);
+		}
 		
 		velocityR += accelerationR ;
 		struct.moveRotation(velocityR * delta * this.turnSpeedModifier);
-		struct.moveX(velocityX * delta * this.speedModifier);
-		struct.moveY(velocityY * delta * this.speedModifier);
-
-		applyDrag(.9f);
+//		struct.moveX(velocityX * delta * this.speedModifier);
+//		struct.moveY(velocityY * delta * this.speedModifier);
+		struct.move(velocity.copy().scale(delta*this.speedModifier));
+		applyDrag(this.dragFactor);
 		
-		this.forceX = 0;
-		this.forceY = 0;
+		
+		
+		this.force.set(0f, 0f);
 		this.torque = 0;
 	}
 
 	@Override
-	public void handleMessage(MessageType type, Message msg) {
+	public void handleMessage(GameWorld gameWorld, MessageType type, Message msg) {
 		switch (type) {
 		case IMPULSE:
 			if (msg instanceof ImpulseMessage) {
@@ -169,6 +190,9 @@ public class Physics extends Component{
 			if (msg instanceof UpdateMessage) {
 				UpdateMessage um = (UpdateMessage)msg;
 				this.update(um.delta);
+				
+				gameWorld.resolveCollision(struct.getTransform(), entity);
+				
 			} else {
 				throw new IllegalMessageException("Physics did not receive UpdateMessage with the corresponding type UPDATE_DELTA.");
 			}

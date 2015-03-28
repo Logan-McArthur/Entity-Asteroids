@@ -1,5 +1,6 @@
 package com.PromethiaRP.Draeke.Asteroids.Component;
 
+import com.PromethiaRP.Draeke.Asteroids.GameWorld;
 import com.PromethiaRP.Draeke.Asteroids.Exceptions.IllegalMessageException;
 import com.PromethiaRP.Draeke.Asteroids.Messages.InteractionHurtMessage;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
@@ -24,20 +25,21 @@ public class Health extends Component{
 	 * @return True if the entity has died as a result of the injury
 	 */
 	public boolean hurt(int damage) {
-		lifePoints = Math.max(0, lifePoints - damage);
-		return isAlive();
+		lifePoints -= damage;
+		return lifePoints <= 0;
 	}
 	
 	public void setHealth(int health) {
 		lifePoints = health;
 	}
 	@Override
-	public void handleMessage(MessageType type, Message msg) {
+	public void handleMessage(GameWorld gameWorld, MessageType type, Message msg) {
 		switch (type) {
 		case HURT_INTERACTION:
 			if (msg instanceof InteractionHurtMessage) {
 				InteractionHurtMessage ihg = (InteractionHurtMessage) msg;
-				if (!hurt(ihg.damage)) {
+				hurt(ihg.damage);
+				if ( ! isAlive()) {
 					entity.kill();
 				}
 			} else {
