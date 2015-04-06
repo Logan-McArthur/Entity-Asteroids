@@ -20,6 +20,7 @@ repositories {
 dependencies {
 	compile group: 'org.slick2d', name: 'slick2d-core', version: '1.0.1'
 	compile group: 'org.lwjgl.lwjgl', name: 'lwjgl', version: '2.9.+'
+	compile group: 'org.luaj', name: 'luaj-jse', version: '3.0'
 }
 
 natives {

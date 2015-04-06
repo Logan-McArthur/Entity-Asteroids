@@ -8,6 +8,9 @@ import com.PromethiaRP.Draeke.Asteroids.Messages.EntityDieMessage;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 
+// TODO: Begin storing components directly in objects, or at least references
+// It does not really make sense to have them be so anonymous, it causes there to be coupling at creation
+
 public class Entity {
 	
 	protected GameWorld gameWorld;
@@ -77,6 +80,8 @@ public class Entity {
 		return alive;
 	}
 	
+	// TODO: Consider having dispatchMessage return values back to sender
+	// But if I have the scripts directly accessing other components, consider not having the return values
 	public void dispatchMessage(MessageType msgType, Message msg) {
 		// Dispatches a message to all components that will receive it.
 		for (Component cp : components) {
