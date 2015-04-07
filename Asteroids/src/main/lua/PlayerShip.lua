@@ -2,7 +2,7 @@ function getDeclaredFunctions()
   return "constructEntity", "weaponFire"
 end
 
-function constructEntity( gameWorld)
+function constructEntity( gameWorld )
   
   local entity = gameWorld:createBlankEntity("PlayerShip")
   

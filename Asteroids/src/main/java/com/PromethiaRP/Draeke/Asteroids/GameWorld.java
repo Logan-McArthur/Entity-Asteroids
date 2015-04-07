@@ -1,7 +1,10 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.PromethiaRP.Draeke.Asteroids.Component.*;
 import com.PromethiaRP.Draeke.Asteroids.Messages.CollisionMessage;
@@ -21,16 +24,20 @@ public class GameWorld {
 
 	private GameContainer container;
 	
-	//private List<Entity> entities;
-	private Entity[] entities;
+	private Set<Entity> entities;
+	private Set<Entity> newEntities;
+	private Set<Entity> deadEntities;
+	//private Entity[] entities;
 	private int openIndex = 0;
 	private Map<Shape, Entity> collisionBoxes;
 	Script scrp = new Script("src/main/lua/PlayerShip.lua");
 	
 	public GameWorld(GameContainer container, int maxEntities) {
 		this.container = container;
-		//entities = new ArrayList<Entity>(maxEntities);
-		entities = new Entity[maxEntities];
+		entities = new HashSet<Entity>(maxEntities);
+		newEntities = new HashSet<Entity>();
+		deadEntities = new HashSet<Entity>();
+		//entities = new Entity[maxEntities];
 		collisionBoxes = new HashMap<Shape, Entity>();
 	}
 	
@@ -48,11 +55,7 @@ public class GameWorld {
 		return ent;
 	}
 	private void addEntity(Entity ent) {
-		if (openIndex == entities.length) {
-			throw new IllegalArgumentException();
-		}
-		entities[openIndex] = ent;
-		openIndex++;
+		newEntities.add(ent);
 	}
 	
 	public void init() {
@@ -79,11 +82,14 @@ public class GameWorld {
 	
 	// At the beginning, clear the collision profiles, but only the beginning because those profiles might be useful
 	public void update(int delta) {
+		entities.removeAll(deadEntities);
+		entities.addAll(newEntities);
+		newEntities.clear();
+		deadEntities.clear();
 		collisionBoxes.clear();
+		
 		for (Entity ent : entities) {
-			if (ent == null) {
-				continue;
-			}
+			
 //		for (int i = 0; i < openIndex && i < entities.length; i++) {
 			Message msg = new UpdateMessage(delta);
 			ent.dispatchMessage(MessageType.UPDATE_INPUT, msg);
@@ -219,13 +225,18 @@ public class GameWorld {
 		
 		Structure struct = new Structure(bulletModel, centerOffsetX, centerOffsetY, scaleX, scaleY);
 		struct.setPosition(position, rotation);
+		
 		Physics phys = new Physics(struct, mass, moment);
 		phys.setVelocity(velocity, velocityR);
+		
 		Health heal = new Health(health);
+		
 		Countdown count = new Countdown();
+		
 		Render rend = new Render(struct);
+		
 		Allegiance all = new Allegiance();
-		Countdown coun = new Countdown();
+		
 		
 		Entity ent = new Entity(this, "Bullet");
 		ent.addComponent(struct);
@@ -234,7 +245,6 @@ public class GameWorld {
 		ent.addComponent(count);
 		ent.addComponent(rend);
 		ent.addComponent(all);
-		ent.addComponent(coun);
 		this.addEntity(ent);
 		
 		return ent;
@@ -287,10 +297,21 @@ public class GameWorld {
 //	}
 //}
 	
+	// TODO: FORCE_MOVE messagetype for Structure
 	public void resolveCollision(Shape collision, Entity owner) {
 //		if (!owner.isAlive()) {
 //			
 //		}
+		if (collision.getCenterX() > container.getWidth()) {
+			
+		} else if (collision.getCenterX() < 0) {
+			
+		}
+		if (collision.getCenterY() > container.getHeight()) {
+			
+		} else if (collision.getCenterY() < 0) {
+			
+		}
 		for (Shape other : collisionBoxes.keySet()) {
 			if (other.intersects(collision)) {
 				//if (collisionBoxes.get(other).isAlive()) {
@@ -307,6 +328,6 @@ public class GameWorld {
 	public void killEntity(Entity ent) {
 		EntityDieMessage edm = new EntityDieMessage();
 		ent.dispatchMessage(MessageType.ENTITY_DIE, edm);
-		
+		deadEntities.add(ent);
 	}
 }

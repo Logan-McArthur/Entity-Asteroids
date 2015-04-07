@@ -30,11 +30,7 @@ public class Health extends Component{
 		return ! isAlive();
 	}
 	
-	public void kill() {
-		lifePoints = 0;
-		EntityDieMessage edm = new EntityDieMessage();
-		entity.dispatchMessage(MessageType.ENTITY_DIE, edm);
-	}
+	
 	
 	public void setHealth(int health) {
 		lifePoints = health;
@@ -46,7 +42,8 @@ public class Health extends Component{
 			if (msg instanceof InteractionHurtMessage) {
 				InteractionHurtMessage ihg = (InteractionHurtMessage) msg;
 				if (hurt(ihg.damage)) {
-					kill();
+					lifePoints = 0;
+					gameWorld.killEntity(entity);
 				}
 			} else {
 				throw new IllegalMessageException("Health did not receive InteractionHurtMessage with the corresponding type HURT_INTERACTION");
