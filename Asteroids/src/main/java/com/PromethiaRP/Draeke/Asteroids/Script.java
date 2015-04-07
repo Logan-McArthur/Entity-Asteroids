@@ -37,11 +37,9 @@ public class Script {
 		addFunctionHandle(Script.INITIALIZATION_FUNCTION);
 		Varargs rtvals = functionMap.get(Script.INITIALIZATION_FUNCTION).invoke();
 		
-		
-		LuaTable val = (LuaTable) rtvals.arg1();
 		int i = 1;
-		while (val.get(i) instanceof LuaString) {
-			addFunctionHandle(val.get(i).tojstring());
+		while (rtvals.isstring(i)) {
+			addFunctionHandle(rtvals.tojstring(i));
 			i++;
 		}
 	}

@@ -1,5 +1,5 @@
 function getDeclaredFunctions()
-  return {"constructEntity", "weaponFire"}
+  return "constructEntity", "weaponFire"
 end
 
 function constructEntity( entity )
