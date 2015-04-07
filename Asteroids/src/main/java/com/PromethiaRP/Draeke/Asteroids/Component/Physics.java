@@ -9,6 +9,7 @@ import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 import com.PromethiaRP.Draeke.Asteroids.Messages.UpdateMessage;
 
+// TODO: Should Physics include the position?
 public class Physics extends Component{
 
 	public static final float MAX_FORCE = 10.0f;

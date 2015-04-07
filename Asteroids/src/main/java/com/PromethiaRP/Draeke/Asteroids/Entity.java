@@ -21,6 +21,13 @@ public class Entity {
 	
 	protected Set<Component> components = new HashSet<Component>();
 	
+	protected Structure structure;
+	protected Allegiance allegiance;
+	protected Health health;
+	protected Input input;
+	protected Physics physics;
+	protected Render rend;
+	
 	public final String name;
 	
 	public Entity(GameWorld gameWorld, String name) {

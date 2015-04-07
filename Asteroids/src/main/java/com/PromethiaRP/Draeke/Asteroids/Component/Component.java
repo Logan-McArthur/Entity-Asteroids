@@ -8,6 +8,19 @@ import com.PromethiaRP.Draeke.Asteroids.GameWorld;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 
+// TODO: Compartmentalize the components
+// Physics and Structure are tightly coupled right now
+// Isn't it everything and Structure though?
+// So what will every Entity have, almost without fail
+// 		An orientation in space?
+//		
+
+// Is it bad to have some Components coupled together?
+// Should there even be one Component superclass? The example had InputComponents and the like
+// And do I want it so that just by having different components the Entities behave differently?
+
+// If there is a weapon component and a weapon script, aren't they both supposed to accomplish the same thing?
+
 public abstract class Component {
 //	private int componentID;
 	

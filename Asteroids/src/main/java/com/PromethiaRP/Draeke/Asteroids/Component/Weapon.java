@@ -9,6 +9,11 @@ import com.PromethiaRP.Draeke.Asteroids.Messages.CountdownMessage;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 
+// Weapon should handle the firing process,
+
+// TODO: Create some form of spawner component 
+// Should Spawner store the mountPoint? Should that be with Structure?
+// If Structure contains the mountPoint, Spawner would dispatch a message saying to create one
 // TODO: Consider having Weapon be an abstract class, where the subclasses build the appropriate projectile
 public class Weapon extends Component{
 
@@ -17,6 +22,7 @@ public class Weapon extends Component{
 	protected Vector2f launchVelocity;
 	protected int bulletLife;
 	protected Physics phys;// struct;
+	// TODO: Move mountPoint out
 	protected Vector2f mountPoint;
 	
 	protected boolean onCooldown;
