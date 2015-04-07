@@ -85,6 +85,8 @@ public class GameWorld {
 		
 	}
 	
+	Script scrp = new Script("src/main/lua/PlayerShip.lua");
+	
 	public Entity constructShip(Vector2f position, float rotation, Vector2f velocity, float vectorR) {
 		float[] shipModel = new float[]{0.0f,0.0f, 30.0f,10.0f, 0.0f, 20.0f};
 		float centerOffsetX = 10f;
@@ -128,7 +130,7 @@ public class GameWorld {
 		ship.addComponent(coun);
 		
 		this.addEntity(ship);
-		
+		scrp.invokeFunction(ship, "constructEntity");
 		return ship;
 	}
 	
