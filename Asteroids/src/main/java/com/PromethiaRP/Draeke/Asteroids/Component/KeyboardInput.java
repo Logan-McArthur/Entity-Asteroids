@@ -9,7 +9,7 @@ import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 import com.PromethiaRP.Draeke.Asteroids.Messages.UpdateMessage;
 
-public class KeyboardInput extends Component {
+public class KeyboardInput extends InputComponent {
 
 	InputManager inputManager;
 	

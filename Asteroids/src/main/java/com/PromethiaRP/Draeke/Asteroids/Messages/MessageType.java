@@ -17,7 +17,9 @@ HURT_ENVIRONMENT,
 
 IMPULSE,
 MOVE,
+
 RENDER,
+
 UPDATE_INPUT,		// Goes with UpdateMessage
 UPDATE_DELTA,		// Goes with UpdateMessage
 WEAPON_FIRE;

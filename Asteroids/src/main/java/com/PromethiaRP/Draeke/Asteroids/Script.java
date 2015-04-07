@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.luaj.vm2.LuaFunction;
-import org.luaj.vm2.LuaString;
-import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
@@ -64,9 +62,14 @@ public class Script {
 	}
 	
 	// Invoke on Entities
-	public void invokeFunction(Entity source, String functionName) {
+	public void invokeFunction(String functionName, Object... source) {
+		LuaValue[] valArr = new LuaValue[source.length];
+		for (int i = 0; i < source.length; i++) {
+			valArr[i] = CoerceJavaToLua.coerce(source[i]);
+		}
 		if (functionMap.containsKey(functionName)) {
-			functionMap.get(functionName).invoke(CoerceJavaToLua.coerce(source));
+			//functionMap.get(functionName).invoke();
+			functionMap.get(functionName).invoke(LuaValue.varargsOf(valArr));
 		} else {
 			throw new IllegalArgumentException("There is no function named " + functionName + " within script " + fileName);
 		}
@@ -98,11 +101,3 @@ public class Script {
 		functionMap.put(functionName, retrieveFunctionHandle(scriptHandle, functionName));
 	}
 }
-
-/*
- * 
-function receive_aif( aifObj )
-    --This is how you can invoke public function associated with aifObj     
-    aifObj:someAifFunction()
-end
- */

@@ -1,32 +1,20 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Vector2f;
-import org.newdawn.slick.state.BasicGameState;
-import org.newdawn.slick.state.StateBasedGame;
 
-import com.PromethiaRP.Draeke.Asteroids.Component.Health;
-import com.PromethiaRP.Draeke.Asteroids.Component.KeyboardInput;
-import com.PromethiaRP.Draeke.Asteroids.Component.Physics;
-import com.PromethiaRP.Draeke.Asteroids.Component.Render;
-import com.PromethiaRP.Draeke.Asteroids.Component.Structure;
-import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
-import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
-import com.PromethiaRP.Draeke.Asteroids.Messages.RenderMessage;
-import com.PromethiaRP.Draeke.Asteroids.Messages.UpdateMessage;
-
-public class GameplayScreen extends BasicGameState{
+public class GameplayScreen extends BasicGame{
 
 	// Entities contain their components, which declare that they receive certain messages
 	// Those messages are used in the update routines
 	
+
+	public GameplayScreen(String title) {
+		super(title);
+	}
 
 	private final int MAX_NUMBER_ENTITIES = 100;
 	
@@ -34,7 +22,7 @@ public class GameplayScreen extends BasicGameState{
 //	
 	private GameWorld gameWorld;
 	@Override
-	public void render(GameContainer container, StateBasedGame game,Graphics grafix) throws SlickException {
+	public void render(GameContainer container, Graphics grafix) throws SlickException {
 		grafix.setLineWidth(2f);
 		grafix.setColor(Color.white);
 		
@@ -43,7 +31,7 @@ public class GameplayScreen extends BasicGameState{
 	}
 
 	@Override
-	public void init(GameContainer container, StateBasedGame game) throws SlickException {
+	public void init(GameContainer container) throws SlickException {
 		gameWorld = new GameWorld(container, MAX_NUMBER_ENTITIES);
 		gameWorld.init();
 //		entities = new ArrayList<Entity>(MAX_NUMBER_ENTITIES);
@@ -81,7 +69,7 @@ public class GameplayScreen extends BasicGameState{
 //	}
 	
 	@Override
-	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+	public void update(GameContainer container, int delta) throws SlickException {
 
 //		boolean asteroidsAlive = false;
 		
@@ -218,9 +206,5 @@ public class GameplayScreen extends BasicGameState{
 //		return asteroids;
 //	}
 
-	@Override
-	public int getID() {
-		return MainApplication.GAMEPLAY_SCREEN;
-	}
 
 }

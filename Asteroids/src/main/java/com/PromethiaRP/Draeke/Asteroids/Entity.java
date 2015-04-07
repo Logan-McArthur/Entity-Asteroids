@@ -1,12 +1,12 @@
 package com.PromethiaRP.Draeke.Asteroids;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import com.PromethiaRP.Draeke.Asteroids.Component.Component;
-import com.PromethiaRP.Draeke.Asteroids.Messages.EntityDieMessage;
-import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
-import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
+import com.PromethiaRP.Draeke.Asteroids.Component.*;
+import com.PromethiaRP.Draeke.Asteroids.Messages.*;
 
 // TODO: Begin storing components directly in objects, or at least references
 // It does not really make sense to have them be so anonymous, it causes there to be coupling at creation
@@ -19,14 +19,14 @@ public class Entity {
 	
 	protected Set<MessageType> messageTypes = new HashSet<MessageType>();
 	
-	protected Set<Component> components = new HashSet<Component>();
+	protected List<Component> components = new ArrayList<Component>();
 	
-	protected Structure structure;
-	protected Allegiance allegiance;
-	protected Health health;
-	protected Input input;
-	protected Physics physics;
-	protected Render rend;
+	private int structureIndex;
+	private int allegianceIndex;
+	private int healthIndex;
+	private int inputIndex;
+	private int physicsIndex;
+	private int renderIndex;
 	
 	public final String name;
 	
@@ -37,17 +37,6 @@ public class Entity {
 //	public Entity(GameWorld gameWorld) {
 //		this.gameWorld = gameWorld;
 //	}
-	
-	/**
-	 * Sets alive to false, does nothing else
-	 */
-	public void kill() {
-		EntityDieMessage edm = new EntityDieMessage();
-		dispatchMessage(MessageType.ENTITY_DIE, edm);
-		alive = false;
-	}
-	
-	
 	
 	public void addComponent(Component cp) {
 		components.add(cp);
@@ -64,29 +53,17 @@ public class Entity {
 		messageTypes.addAll(messages);
 	}
 	
-	public boolean isVisible() {
-		return isAlive();
-	}
-	
 	public void update(int delta){
 		
 	}
 	
-	/**
-	 * Called by the game to tell an Entity that it has collided with
-	 * Should not interfere with Entity other
-	 * Entity other
-	 * @param other
-	 */
-	public void collide(Entity other) {
-		
-	}
 	
-	public boolean isAlive() {
-		// Alive should be set by the health component through the message system?
-		return alive;
-	}
 	
+//	public boolean isAlive() {
+//		// Alive should be set by the health component through the message system?
+//		return alive;
+//	}
+//	
 	// TODO: Consider having dispatchMessage return values back to sender
 	// But if I have the scripts directly accessing other components, consider not having the return values
 	public void dispatchMessage(MessageType msgType, Message msg) {

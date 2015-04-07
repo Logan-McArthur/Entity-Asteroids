@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.PromethiaRP.Draeke.Asteroids.Component.*;
 import com.PromethiaRP.Draeke.Asteroids.Messages.CollisionMessage;
+import com.PromethiaRP.Draeke.Asteroids.Messages.EntityDieMessage;
 import com.PromethiaRP.Draeke.Asteroids.Messages.Message;
 import com.PromethiaRP.Draeke.Asteroids.Messages.MessageType;
 import com.PromethiaRP.Draeke.Asteroids.Messages.RenderMessage;
@@ -24,6 +25,7 @@ public class GameWorld {
 	private Entity[] entities;
 	private int openIndex = 0;
 	private Map<Shape, Entity> collisionBoxes;
+	Script scrp = new Script("src/main/lua/PlayerShip.lua");
 	
 	public GameWorld(GameContainer container, int maxEntities) {
 		this.container = container;
@@ -32,6 +34,19 @@ public class GameWorld {
 		collisionBoxes = new HashMap<Shape, Entity>();
 	}
 	
+	private Script getScript(String scriptName) {
+		return scrp;
+	}
+	
+	public void runScript(String scriptName, String functionName) {
+		getScript(scriptName).invokeFunction(functionName, this);
+	}
+	
+	public Entity createBlankEntity(String entityName) {
+		Entity ent = new Entity(this, entityName);
+		this.addEntity(ent);
+		return ent;
+	}
 	private void addEntity(Entity ent) {
 		if (openIndex == entities.length) {
 			throw new IllegalArgumentException();
@@ -42,11 +57,12 @@ public class GameWorld {
 	
 	public void init() {
 		initializeAsteroids();
-		constructShip(new Vector2f(350,350), 0, new Vector2f(0,0), 0);
-	}
-	
-	public boolean isOnScreen(Entity ent) {
-		return true;
+		
+//		Entity ship = new Entity(this, "Ship");
+		this.runScript("PlayerShip.lua", "constructEntity");
+		//scrp.invokeFunction("constructEntity", this, ship );
+		//this.addEntity(ship);
+//		this.addEntity(constructShip(new Vector2f(350,350), 0, new Vector2f(0,0), 0));
 	}
 	
 	public void render(Graphics grafix) {
@@ -55,9 +71,9 @@ public class GameWorld {
 				continue;
 			}
 		//for (int i = 0; i < openIndex && i < entities.length; i++) {
-			if (ent.isAlive() && isOnScreen(ent)) {
+	//		if (ent.isAlive() && isOnScreen(ent)) {
 				ent.dispatchMessage(MessageType.RENDER, new RenderMessage(grafix));
-			}
+	//		}
 		}
 	}
 	
@@ -85,74 +101,94 @@ public class GameWorld {
 		
 	}
 	
-	Script scrp = new Script("src/main/lua/PlayerShip.lua");
 	
-	public Entity constructShip(Vector2f position, float rotation, Vector2f velocity, float vectorR) {
-		float[] shipModel = new float[]{0.0f,0.0f, 30.0f,10.0f, 0.0f, 20.0f};
-		float centerOffsetX = 10f;
-		float centerOffsetY = 10f;
-		float scaleX = 1.0f;
-		float scaleY = 1.0f;
-		
-		float mass = 1f;
-		float moment = 1f;
-		
-		int health = 5;
-		
-		Structure struct = new Structure(shipModel, centerOffsetX, centerOffsetY, scaleX, scaleY);
-		struct.setPosition(position, rotation);
-		
+	// TODO: Delete this temporary method
+	@Deprecated
+	public float[] getShipModel() {
+		return new float[]{0.0f,0.0f, 30.0f,10.0f, 0.0f, 20.0f};
+	}
+	
+	public Structure constructStructure(float[] model, float centerX, float centerY, float rotation, 
+			float centerOffX, float centerOffY, float scaleX, float scaleY) {
+		Structure struct = new Structure(model, centerOffX, centerOffY, scaleX, scaleY);
+		struct.setPosition(new Vector2f(centerX, centerY), rotation);
+		return struct;
+	}
+	
+	public Physics constructPhysics(Structure struct, float mass, float moment, float velX, float velY, float velR, float drag) {
 		Physics phys = new Physics(struct, mass, moment);
-		phys.setVelocity(velocity, vectorR);
-		phys.setDrag(.95f);
+		phys.setVelocity(new Vector2f(velX, velY), velR);
+		phys.setDrag(drag);
+		return phys;
+	}
+	
+	public Health constructHealth(int life) {
+		return new Health(life);
+	}
+	
+	
+	public KeyboardInput constructKeyboardInput() {
+		return new KeyboardInput(createInput(container));
+	}
+	public Render constructRender(Structure struct) {
+		return new Render(struct);
+	}
+	public Weapon constructWeapon(Physics phys,float mountX, float mountY, float velForward, float velSideways, int cooldown, int bulletLife) {
+		//WeaponType typ = WeaponType.SINGLE;
 		
-		Render rend = new Render(struct);
-		
-		Health heal = new Health(health);
-		
-		KeyboardInput key = new KeyboardInput(createInput(container));
-		
-		WeaponType typ = WeaponType.SINGLE;
 		//Weapon weap = new Weapon(struct, new Vector2f(30,10), typ.COOLDOWN, typ.NUMBER_SHOTS, typ.SHOT_ANGLES, typ.BULLET_LIFE );
-		Weapon weap = new Weapon(phys, new Vector2f(22,0), typ.COOLDOWN, typ.NUMBER_SHOTS, new Vector2f(2, 0), typ.BULLET_LIFE );
+		return new Weapon(phys, new Vector2f(mountX,mountY), cooldown, 1, new Vector2f(velForward, velSideways), bulletLife );
+				
+	}
+	public Allegiance constructAllegiance() {
+		return new Allegiance();
+	}
+	public Countdown constructCountdown() {
+		return new Countdown();
+	}
+	public Entity constructShip(Vector2f position, float rotation, Vector2f velocity, float vectorR) {
+//		float[] shipModel = getShipModel();
+//		float centerOffsetX = 10f;
+//		float centerOffsetY = 10f;
+//		float scaleX = 1.0f;
+//		float scaleY = 1.0f;
+//		
+//		float mass = 1f;
+//		float moment = 1f;
+//		
+//		int health = 5;
+//		
+//		Structure struct = new Structure(shipModel, centerOffsetX, centerOffsetY, scaleX, scaleY);
+//		struct.setPosition(position, rotation);
 		
-		Allegiance all = new Allegiance();
-		Countdown coun = new Countdown();
+		//Physics phys = constructPhysics(struct, mass, moment, velocity.x, velocity.y, vectorR, .95f);
+//				new Physics(struct, mass, moment);
+//		phys.setVelocity(velocity, vectorR);
+//		phys.setDrag(.95f);
+		
+		//Render rend = new Render(struct);
+		
+		//Health heal = constructHealth(health);
+		
+		//KeyboardInput key = constructKeyboardInput();
+		
+		//WeaponType typ = WeaponType.SINGLE;
+		//Weapon weap = new Weapon(struct, new Vector2f(30,10), typ.COOLDOWN, typ.NUMBER_SHOTS, typ.SHOT_ANGLES, typ.BULLET_LIFE );
+		//Weapon weap = new Weapon(phys, new Vector2f(22,0), typ.COOLDOWN, typ.NUMBER_SHOTS, new Vector2f(2, 0), typ.BULLET_LIFE );
+		
+//		Allegiance all = new Allegiance();
+//		Countdown coun = new Countdown();
 		
 		Entity ship = new Entity(this, "Ship");
-		ship.addComponent(struct);
-		ship.addComponent(phys);
-		ship.addComponent(rend);
-		ship.addComponent(heal);
-		ship.addComponent(key);
-		ship.addComponent(weap);
-		ship.addComponent(all);
-		ship.addComponent(coun);
 		
-		this.addEntity(ship);
-		scrp.invokeFunction(ship, "constructEntity");
+		scrp.invokeFunction("constructEntity", this, ship );
 		return ship;
 	}
 	
+	
 	// From the Player.java class
 	
-//	private void fireWeapon() {
-//	float[] coords = body.getTransform().getPoint(1);
-//	Bullet[] allocated = GameplayScreen.allocateBullets(currentWeapon.NUMBER_SHOTS);
-//	for (int i = 0; i < allocated.length; i++) {
-//		Body allocBod = allocated[i].body;
-//		
-//		allocBod.setPositionX(coords[0]);
-//		allocBod.setPositionY(coords[1]);
-//		allocBod.setVelocityX(body.getVelocityX());
-//		allocBod.setVelocityY(body.getVelocityY());
-//		allocBod.setRotation(body.getRotation() + currentWeapon.SHOT_ANGLES[i]);
-//		allocated[i].start(currentWeapon.BULLET_LIFE);
-////		allocated[i].recycle(coords[0], coords[1], body.velocityX, body.velocityY, body.rotation+currentWeapon.SHOT_ANGLES[i], currentWeapon.BULLET_LIFE);
-//	}
-//	
-//	weaponCooler.start(currentWeapon.COOLDOWN);
-//}
+
 	
 	public InputManager createInput(GameContainer container) {
 		
@@ -252,19 +288,25 @@ public class GameWorld {
 //}
 	
 	public void resolveCollision(Shape collision, Entity owner) {
-		if (!owner.isAlive()) {
-			
-		}
+//		if (!owner.isAlive()) {
+//			
+//		}
 		for (Shape other : collisionBoxes.keySet()) {
 			if (other.intersects(collision)) {
-				if (collisionBoxes.get(other).isAlive()) {
+				//if (collisionBoxes.get(other).isAlive()) {
 					CollisionMessage cmOther = new CollisionMessage(owner);
 					CollisionMessage cmOwner = new CollisionMessage(collisionBoxes.get(other));
 					owner.dispatchMessage(MessageType.ENTITY_COLLIDE, cmOwner);
 					collisionBoxes.get(other).dispatchMessage(MessageType.ENTITY_COLLIDE, cmOther);
-				}
+				//}
 			}
 		}
 		collisionBoxes.put(collision, owner);
+	}
+	
+	public void killEntity(Entity ent) {
+		EntityDieMessage edm = new EntityDieMessage();
+		ent.dispatchMessage(MessageType.ENTITY_DIE, edm);
+		
 	}
 }

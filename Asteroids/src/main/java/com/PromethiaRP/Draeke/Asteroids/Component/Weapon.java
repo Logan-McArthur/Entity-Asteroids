@@ -67,7 +67,7 @@ public class Weapon extends Component{
 			break;
 		case COUNTDOWN_FINISH:
 			if (msg instanceof CountdownMessage) {
-				CountdownMessage cm = (CountdownMessage)msg;
+//				CountdownMessage cm = (CountdownMessage)msg;
 				this.onCooldown = false;
 			} else {
 				throw new IllegalMessageException("Weapon did not receive CountdownMessage with the corresponding type COUNTDOWN_FINISH.");
