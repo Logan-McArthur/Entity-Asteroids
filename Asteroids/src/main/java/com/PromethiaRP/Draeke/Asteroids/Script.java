@@ -4,49 +4,81 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.luaj.vm2.LuaFunction;
+import org.luaj.vm2.LuaString;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 // Scripts not necessarily being unique to an entity
 
 public class Script {
 	
+	public static final String INITIALIZATION_FUNCTION = "getDeclaredFunctions";
+	
 	private String fileName;
 	private Map<String, LuaFunction> functionMap;
+	private LuaValue scriptHandle;
 	
-	public Script(String fileName, String[] functionNames) {
-		functionMap = Script.loadFunctionMap(fileName, functionNames);
+//	public Script(String fileName) {
+//		this.fileName = fileName;	// Always have this first
+//		functionMap = new HashMap<String, LuaFunction>();
+//		loadFunctionMap(fileName, functionMap, functionNames);
+//		
+//	}
+	
+	public Script(String fileName) {
 		this.fileName = fileName;
+		functionMap = new HashMap<String, LuaFunction>();
+		scriptHandle = JsePlatform.standardGlobals();
+		scriptHandle.get("dofile").call( LuaValue.valueOf(fileName) );
+		
+		addFunctionHandle(Script.INITIALIZATION_FUNCTION);
+		Varargs rtvals = functionMap.get(Script.INITIALIZATION_FUNCTION).invoke();
+		
+		
+		LuaTable val = (LuaTable) rtvals.arg1();
+		int i = 1;
+		while (val.get(i) instanceof LuaString) {
+			addFunctionHandle(val.get(i).tojstring());
+			i++;
+		}
 	}
 	
 	// Invoke on Entities
 	public void invokeFunction(Entity source, String functionName) {
 		if (functionMap.containsKey(functionName)) {
-			functionMap.get(functionName).invoke();
+			functionMap.get(functionName).invoke(CoerceJavaToLua.coerce(source));
 		} else {
-			throw new IllegalArgumentException("There is no function named" + functionName + " within script " + fileName);
+			throw new IllegalArgumentException("There is no function named " + functionName + " within script " + fileName);
 		}
 	}
 	
-	private static Map<String, LuaFunction> loadFunctionMap(String fileName, String[] functionNames) {
-		Map<String, LuaFunction> functionMap = new HashMap<String, LuaFunction>();
-		LuaValue _G = JsePlatform.standardGlobals();
-		
-		_G.get("dofile").call( LuaValue.valueOf(fileName));
-		
-		for (String function : functionNames) {
-			functionMap.put(function, retrieveFunctionHandle(_G, function));
-		}
-		return functionMap;
-	}
 	
-	private static LuaFunction retrieveFunctionHandle(LuaValue _G, String functionName) {
+//	private void loadFunctionMap(String fileName, Map<String, LuaFunction> functionMap, String[] functionNames) {
+//		LuaValue _G = JsePlatform.standardGlobals();
+//		_G.get("dofile").call( LuaValue.valueOf(fileName));
+//
+//		scriptHandle = _G;
+//		
+//		for (String function : functionNames) {
+//			addFunctionHandle(function);
+//		}
+//		
+//	}
+	
+	
+	private LuaFunction retrieveFunctionHandle(LuaValue _G, String functionName) {
 		LuaValue uncertain = _G.get(functionName);
-		
 		if (uncertain instanceof LuaFunction) {
 			return (LuaFunction) uncertain;
 		}
-		throw new RuntimeException();
+		throw new RuntimeException("Could not find function " + functionName + " in file " + fileName);
+	}
+	
+	public void addFunctionHandle(String functionName) {
+		functionMap.put(functionName, retrieveFunctionHandle(scriptHandle, functionName));
 	}
 }
 
