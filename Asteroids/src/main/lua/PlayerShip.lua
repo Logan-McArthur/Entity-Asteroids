@@ -2,7 +2,7 @@ function getDeclaredFunctions()
   return "constructEntity", "weaponFire"
 end
 
-function constructEntity( gameWorld )
+function constructEntity( gameWorld , centerX, centerY, rotation )
   
   local entity = gameWorld:createBlankEntity("PlayerShip")
   
@@ -11,12 +11,12 @@ function constructEntity( gameWorld )
   local scaleX = 1.0
   local scaleY = 1.0
   
-  local centerX = 40
-  local centerY = 100
-  local rotation = 0.0
+--  local centerX = 40
+--  local centerY = 100
+--  local rotation = 0.0
   
   local mass = 1.0
-  local moment = 1.0
+  local moment = 1.7
   
   local velocityX = 0.0
   local velocityY = 0.0

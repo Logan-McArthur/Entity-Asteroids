@@ -299,9 +299,7 @@ public class GameWorld {
 	
 	// TODO: FORCE_MOVE messagetype for Structure
 	public void resolveCollision(Shape collision, Entity owner) {
-//		if (!owner.isAlive()) {
-//			
-//		}
+
 		if (collision.getCenterX() > container.getWidth()) {
 			
 		} else if (collision.getCenterX() < 0) {
